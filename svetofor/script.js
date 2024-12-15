@@ -36,6 +36,7 @@ function activeTrafficLight() {
       if (countTimeColorRed <= timeColorYellow) {
         colorYellow.classList.add('yellow');
       }
+
       if (countTimeColorRed === -1) {
         countRed.textContent = '';
         colorRed.classList.remove('red');
