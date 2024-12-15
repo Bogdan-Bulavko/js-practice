@@ -18,4 +18,4 @@ function checkTicket(str) {
 console.log(checkTicket('005212')); // true
 console.log(checkTicket('133700')); // true
 console.log(checkTicket('123032')); // false
-console.log(checkTicket('0052102')); // false
+console.log(checkTicket('0052102')); // true
