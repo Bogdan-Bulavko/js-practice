@@ -1,0 +1,41 @@
+body {
+  background: black;
+}
+
+.traffic-light {
+  width: 100px;
+  height: 100px;
+  border-radius: 50px;
+  background-color: gray;
+}
+
+.red {
+  background-color: red;
+  box-shadow: 0px 0px 30px red;
+}
+
+.yellow {
+  background-color: yellow;
+  box-shadow: 0px 0px 30px yellow;
+}
+
+.green {
+  background-color: rgb(21, 173, 21);
+  box-shadow: 0px 0px 30px rgb(21, 173, 21);
+}
+
+.count-red {
+  display: block;
+  padding-top: 30px;
+  text-align: center;
+  font-size: 30px;
+  color: white;
+}
+
+.count-green {
+  display: block;
+  padding-top: 30px;
+  text-align: center;
+  font-size: 30px;
+  color: white;
+}
