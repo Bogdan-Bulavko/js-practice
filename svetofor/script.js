@@ -18,32 +18,22 @@ function activeTrafficLight() {
   setInterval(() => {
     if (countTimeColorGreen > 0) {
       countGreen.textContent = countTimeColorGreen;
-      if (colorGreen.classList.contains('green')) {
-        countTimeColorGreen--;
-      } else {
-        colorGreen.classList.add('green');
-        countTimeColorGreen--;
-      }
-      if (countTimeColorGreen <= 5) {
+      countTimeColorGreen--;
+      colorGreen.classList.add('green');
+      if (countTimeColorGreen <= timeColorYellow) {
+        colorYellow.classList.add('yellow');
         setTimeout(() => {
           colorGreen.classList.remove('green');
         }, 500);
       }
-      if (countTimeColorGreen <= timeColorYellow) {
-        colorYellow.classList.add('yellow');
-      }
-    } else if (countTimeColorGreen === 0) {
-      countGreen.textContent = '';
+    } else {
       countRed.textContent = countTimeColorRed;
-      if (colorRed.classList.contains('red')) {
-        countTimeColorRed--;
-      } else {
-        colorGreen.classList.remove('green');
-        colorYellow.classList.remove('yellow');
-        colorRed.classList.add('red');
-        countTimeColorRed--;
-      }
-      if (countTimeColorRed === timeColorYellow) {
+      countGreen.textContent = '';
+      countTimeColorRed--;
+      colorYellow.classList.remove('yellow');
+      colorGreen.classList.remove('green');
+      colorRed.classList.add('red');
+      if (countTimeColorRed <= timeColorYellow) {
         colorYellow.classList.add('yellow');
       }
       if (countTimeColorRed === -1) {
