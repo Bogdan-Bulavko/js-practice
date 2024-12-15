@@ -1,9 +1,9 @@
 'use strict';
 
 const trafficLight = document.querySelector('.traffic-light-wrapper');
-const colorRed = trafficLight.children[0];
-const colorYellow = trafficLight.children[1];
-const colorGreen = trafficLight.children[2];
+const colorRed = document.querySelector('#red');
+const colorYellow = document.querySelector('#yellow');
+const colorGreen = document.querySelector('#green');
 const countGreen = document.querySelector('.count-green');
 const countRed = document.querySelector('.count-red');
 
