@@ -1,7 +1,7 @@
 function census(arr) {
   if (arr.length <= 1) return undefined;
+
   const pers = arr.reduce((acc, item) => {
-    console.log(acc, item);
     if (acc.age > item.age) {
       return acc;
     } else {
