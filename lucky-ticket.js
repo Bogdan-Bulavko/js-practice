@@ -6,6 +6,7 @@ function checkTicket(str) {
     // Перебираю массив с конца
     numTotal -= arr[i]; // От общего числа отнимаю крайнее число
     num2 += arr[i]; // К числу второй половинки прибавляю крайнее число
+    console.log(numTotal, num2);
     if (numTotal === num2) {
       return true;
     }
