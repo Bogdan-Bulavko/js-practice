@@ -20,5 +20,5 @@ console.log(
     { age: 70, name: 'Goo', gender: 'Male' },
     { age: 40, name: 'Foo', gender: 'Male' },
   ])
-); // 'Foo'
+); // 'Goo'
 console.log(census([{ age: 40, name: 'Liza', gender: 'Female' }])); // 'undefined'
