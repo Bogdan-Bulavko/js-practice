@@ -1,15 +1,16 @@
-// Это было сложно для меня, надо еще такие решить потерял час где-то
-
 function census(arr) {
   if (arr.length <= 1) return undefined;
 
-  const pers = arr.reduce((acc, item) => {
-    if (item.gender === 'Male') {
-      return acc.gender === 'Female' ? item : item.age > acc.age ? item : acc;
-    } else {
+  const pers = arr.reduce(
+    (acc, item) => {
+      if (item.gender === 'Male' && item.age > acc.age) {
+        acc = item;
+      }
+
       return acc;
-    }
-  });
+    },
+    { age: 0 }
+  );
 
   return pers.name;
 }

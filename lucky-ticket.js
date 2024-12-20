@@ -16,7 +16,7 @@ function checkTicket(str) {
   return false;
 }
 
-console.log(checkTicket('005212')); // true
-console.log(checkTicket('133700')); // true
-console.log(checkTicket('123032')); // false
-console.log(checkTicket('0052102')); // true
+console.log(checkTicket('001 809')); // false
+// console.log(checkTicket('133700')); // true
+// console.log(checkTicket('123032')); // false
+// console.log(checkTicket('0052102')); // true

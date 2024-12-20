@@ -1,5 +1,5 @@
 function isPalindrome(str) {
-  return str === str.reverse() ? true : false;
+  return str === str.split('').reverse().join('') ? true : false;
 }
 
 console.log(isPalindrome('121')); // true

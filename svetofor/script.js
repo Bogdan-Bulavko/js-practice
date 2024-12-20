@@ -6,9 +6,9 @@ const colorGreen = document.querySelector('#green'); // Получение зе�
 const countGreen = document.querySelector('.count-green'); // Получение поля отображение остаточного времени красного цвета
 const countRed = document.querySelector('.count-red'); // Получение поля отображение остаточного времени зелёного цвета
 
-let timeColorGreen = 10; // Таймер красного цвета
-let timeColorYellow = 2; // Таймер жёлтого цвета
-let timeColorRed = 10; // Таймер зелёного цвета
+const timeColorGreen = 10; // Таймер красного цвета
+const timeColorYellow = 2; // Таймер жёлтого цвета
+const timeColorRed = 10; // Таймер зелёного цвета
 
 function activeTrafficLight() {
   let countTimeColorGreen = timeColorGreen; // Счётчик отсчета красного цвета
