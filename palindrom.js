@@ -1,5 +1,7 @@
 function isPalindrome(str) {
-  return str === str.split('').reverse().join('') ? true : false;
+  return str.toLowerCase() === str.toLowerCase().split('').reverse().join('')
+    ? true
+    : false;
 }
 
 console.log(isPalindrome('121')); // true
