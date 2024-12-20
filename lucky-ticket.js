@@ -4,6 +4,7 @@ function checkTicket(str) {
     .split('')
     .slice(0, str.length / 2)
     .reduce((acc, item) => acc + +item, 0);
+
   const seccondHalfTicket = str
     .split('')
     .slice(str.length / 2)
