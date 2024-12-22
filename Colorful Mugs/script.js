@@ -1,6 +1,10 @@
 'use strict';
 
 const playingField = document.querySelector('.playing-field');
+const sizeCircle = 30;
+const sizePlayingField = 400;
+const quantityCircle = 8;
+const additionalInformationAboutCircle = true;
 
 function generateHex(data) {
   const colorSymbol = [
@@ -35,7 +39,7 @@ function generateHex(data) {
   return color;
 }
 
-function chekDataPosition(data, position, sizeCircle) {
+function chekDataPosition(data, position) {
   return data.every((item) => {
     if (
       (position.top > item.top + sizeCircle / 2 ||
@@ -49,7 +53,7 @@ function chekDataPosition(data, position, sizeCircle) {
   });
 }
 
-function generatePosition(data, sizeCircle) {
+function generatePosition(data) {
   let top = Math.floor(
     Math.random() * (playingField.clientHeight - sizeCircle)
   );
@@ -58,20 +62,16 @@ function generatePosition(data, sizeCircle) {
     Math.random() * (playingField.clientWidth - sizeCircle)
   );
 
-  if (chekDataPosition(data, { top, left }, sizeCircle)) {
+  if (chekDataPosition(data, { top, left })) {
     return {
       top: top,
       left: left,
     };
   }
-  return generatePosition(data, sizeCircle);
+  return generatePosition(data);
 }
 
 function generateMugs() {
-  const sizeCircle = 30;
-  const sizePlayingField = 400;
-  const quantityCircle = 8;
-  const additionalInformationAboutCircle = true;
   const dataCircle = [];
   const dataHex = [];
 
@@ -86,7 +86,7 @@ function generateMugs() {
     playingField.innerHTML += `<div class="circle" id = id-${hex}></div>`;
 
     const circle = document.querySelector(`#id-${hex}`);
-    const position = generatePosition(dataCircle, sizeCircle);
+    const position = generatePosition(dataCircle);
     dataCircle.push({ id: `#id-${hex}`, ...position, num: i + 1 });
 
     if (additionalInformationAboutCircle) {
@@ -103,28 +103,21 @@ function generateMugs() {
 
 function mouseDownMoveElem(e) {
   const item = e.target;
-  let mouseClickPointTop = e.clientY - item.getBoundingClientRect().top;
-  let mouseClickPointleft = e.clientX - item.getBoundingClientRect().left;
 
-  let top =
-    e.clientY - mouseClickPointTop - playingField.getBoundingClientRect().top;
-  let left =
-    e.clientX - mouseClickPointleft - playingField.getBoundingClientRect().left;
-  if (
-    e.target.getAttribute('id') !== 'playing-field' &&
-    e.target.localName === 'div'
-  ) {
-    setPositonInStyle(e.target, { top: top, left: left });
+  let top = e.clientY - playingField.getBoundingClientRect().top;
+  let left = e.clientX - playingField.getBoundingClientRect().left;
+  {
+    setPositonInStyle(item, { top: top, left: left });
   }
 }
 
 function setPositonInStyle(elem, position) {
   if (
-    position.top < elem.offsetParent.offsetHeight - elem.offsetHeight &&
-    position.left < elem.offsetParent.offsetWidth - elem.offsetWidth
+    position.top < playingField.offsetHeight - elem.offsetHeight &&
+    position.left < playingField.offsetWidth - elem.offsetWidth
   ) {
-    elem.style.top = `${position.top}px`;
-    elem.style.left = `${position.left}px`;
+    elem.style.top = `${position.top - sizeCircle / 2}px`;
+    elem.style.left = `${position.left - sizeCircle / 2}px`;
     elem.textContent = `${Math.floor(
       position.top + playingField.getBoundingClientRect().top
     )}`;
@@ -132,12 +125,11 @@ function setPositonInStyle(elem, position) {
 }
 
 function addEventHandlersForCircle() {
-  const collectionCircle = document.querySelectorAll('.circle');
-
-  collectionCircle.forEach((circle) => {
-    playingField.addEventListener('mousedown', (e) => {
-      playingField.addEventListener('mousemove', mouseDownMoveElem);
-    });
+  playingField.addEventListener('mousedown', () => {
+    playingField.addEventListener('mousemove', mouseDownMoveElem);
+  });
+  playingField.addEventListener('mouseup', () => {
+    playingField.removeEventListener('mousemove', mouseDownMoveElem);
   });
 }
 
