@@ -39,13 +39,11 @@ function generateHex(data) {
   return color;
 }
 
-function chekDataPosition(data, position) {
+function chekDataPosition(data, top, left) {
   return data.every((item) => {
     if (
-      (position.top > item.top + sizeCircle / 2 ||
-        position.top < item.top - sizeCircle / 2) &&
-      (position.left > item.left + sizeCircle ||
-        position.left < item.left - sizeCircle)
+      (top > item.top + sizeCircle / 2 || top < item.top - sizeCircle / 2) &&
+      (left > item.left + sizeCircle || left < item.left - sizeCircle)
     ) {
       return true;
     }
@@ -62,7 +60,7 @@ function generatePosition(data) {
     Math.random() * (playingField.clientWidth - sizeCircle)
   );
 
-  if (chekDataPosition(data, { top, left })) {
+  if (chekDataPosition(data, top, left)) {
     return {
       top: top,
       left: left,
@@ -102,30 +100,41 @@ function generateMugs() {
 }
 
 function mouseDownMoveElem(e) {
-  const item = e.target;
-
   let top = e.clientY - playingField.getBoundingClientRect().top;
   let left = e.clientX - playingField.getBoundingClientRect().left;
+
   {
-    setPositonInStyle(item, { top: top, left: left });
+    setPositonInStyle(e.target, { top: top, left: left });
   }
 }
 
+let clickTop = 0;
+let clickLeft = 0;
+
 function setPositonInStyle(elem, position) {
   if (
-    position.top < playingField.offsetHeight - elem.offsetHeight &&
-    position.left < playingField.offsetWidth - elem.offsetWidth
+    position.top < playingField.offsetHeight - elem.offsetHeight + clickTop &&
+    position.left < playingField.offsetWidth - elem.offsetWidth + clickLeft &&
+    position.left - clickLeft > 0 &&
+    position.top - clickTop > 0
   ) {
-    elem.style.top = `${position.top - sizeCircle / 2}px`;
-    elem.style.left = `${position.left - sizeCircle / 2}px`;
-    elem.textContent = `${Math.floor(
-      position.top + playingField.getBoundingClientRect().top
-    )}`;
+    if (clickTop === 0 && clickLeft === 0) {
+      elem.style.top = `${position.top}px`;
+      elem.style.left = `${position.left}px`;
+      elem.textContent = Math.floor(position.top);
+    } else {
+      elem.style.top = `${position.top - clickTop}px`;
+      elem.style.left = `${position.left - clickLeft}px`;
+      elem.textContent = Math.floor(position.left);
+    }
   }
 }
 
 function addEventHandlersForCircle() {
-  playingField.addEventListener('mousedown', () => {
+  playingField.addEventListener('mousedown', (e) => {
+    clickTop = e.y - e.target.getBoundingClientRect().top;
+    clickLeft = e.x - e.target.getBoundingClientRect().left;
+
     playingField.addEventListener('mousemove', mouseDownMoveElem);
   });
   playingField.addEventListener('mouseup', () => {
