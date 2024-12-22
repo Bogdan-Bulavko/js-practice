@@ -60,12 +60,15 @@ function generateHex(data) {
 //
 
 function chekDataPosition(data, position, sizeCircle) {
-  return data.forEach((item, i) => {
-    console.log(
+  return data.every((item) => {
+    if (
       position.top > item.top + sizeCircle ||
-        position.top < item.top - sizeCircle,
-      `position ${position.top} end ${i + 1} item ${item.top}`
-    );
+      position.top < item.top - sizeCircle
+    ) {
+      return true;
+    } else {
+      return false;
+    }
   });
 }
 
@@ -82,12 +85,14 @@ function generatePosition(data, sizeCircle) {
     Math.random() * (playingField.clientWidth - sizeCircle)
   );
 
-  chekDataPosition(data, { top, left }, sizeCircle);
-
-  return {
-    top: top,
-    left: left,
-  };
+  if (chekDataPosition(data, { top, left }, sizeCircle)) {
+    return {
+      top: top,
+      left: left,
+    };
+  } else {
+    generatePosition(data, sizeCircle);
+  }
 }
 
 //
