@@ -4,7 +4,9 @@ const playingField = document.querySelector('.playing-field');
 const sizeCircle = 30;
 const sizePlayingField = 400;
 const quantityCircle = 8;
-const additionalInformationAboutCircle = true;
+const additionalInformationAboutCircle = false;
+const dataCircle = [];
+const dataHex = [];
 
 function generateHex(data) {
   const colorSymbol = [
@@ -69,33 +71,35 @@ function generatePosition(data) {
   return generatePosition(data);
 }
 
-function generateMugs() {
-  const dataCircle = [];
-  const dataHex = [];
+function createCercle() {
+  const hex = generateHex(dataHex);
 
+  dataHex.push(hex);
+
+  playingField.innerHTML += `<div class="circle" id = id-${hex}></div>`;
+
+  const circle = document.querySelector(`#id-${hex}`);
+
+  const position =
+    dataCircle.length <= quantityCircle
+      ? generatePosition(dataCircle)
+      : { top: clickTop, left: clickLeft };
+
+  dataCircle.push({ id: `#id-${hex}`, ...position });
+  setPositonInStyle(circle, position);
+
+  circle.style.background = `#${hex}`;
+  circle.style.width = `${sizeCircle}px`;
+  circle.style.height = `${sizeCircle}px`;
+  circle.style.fontSize = `8px`;
+}
+
+function generateMugs() {
   playingField.style.cssText = `width: ${sizePlayingField}px;
                                 height: ${sizePlayingField}px;`;
 
   for (let i = 0; i < quantityCircle; i++) {
-    const hex = generateHex(dataHex);
-
-    dataHex.push(hex);
-
-    playingField.innerHTML += `<div class="circle" id = id-${hex}></div>`;
-
-    const circle = document.querySelector(`#id-${hex}`);
-    const position = generatePosition(dataCircle);
-    dataCircle.push({ id: `#id-${hex}`, ...position, num: i + 1 });
-
-    if (additionalInformationAboutCircle) {
-      circle.textContent = `${dataCircle[i].num}, ${dataCircle[i].top}`;
-    }
-    circle.style.background = `#${hex}`;
-    circle.style.width = `${sizeCircle}px`;
-    circle.style.height = `${sizeCircle}px`;
-    circle.style.fontSize = `8px`;
-
-    setPositonInStyle(circle, position);
+    createCercle(i);
   }
 }
 
@@ -118,14 +122,13 @@ function setPositonInStyle(elem, position) {
     position.left - clickLeft > 0 &&
     position.top - clickTop > 0
   ) {
+    console.log(position);
     if (clickTop === 0 && clickLeft === 0) {
       elem.style.top = `${position.top}px`;
       elem.style.left = `${position.left}px`;
-      elem.textContent = Math.floor(position.top);
     } else {
       elem.style.top = `${position.top - clickTop}px`;
       elem.style.left = `${position.left - clickLeft}px`;
-      elem.textContent = Math.floor(position.left);
     }
   }
 }
@@ -141,6 +144,10 @@ function addEventHandlersForCircle() {
     playingField.removeEventListener('mousemove', mouseDownMoveElem);
   });
 }
+
+playingField.addEventListener('dblclick', (e) => {
+  createCercle();
+});
 
 generateMugs();
 addEventHandlersForCircle();
