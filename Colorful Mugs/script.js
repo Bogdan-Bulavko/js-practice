@@ -81,11 +81,12 @@ function createCercle() {
   const circle = document.querySelector(`#id-${hex}`);
 
   const position =
-    dataCircle.length <= quantityCircle
+    dataCircle.length < quantityCircle
       ? generatePosition(dataCircle)
       : { top: clickTop, left: clickLeft };
 
   dataCircle.push({ id: `#id-${hex}`, ...position });
+
   setPositonInStyle(circle, position);
 
   circle.style.background = `#${hex}`;
@@ -119,14 +120,17 @@ function setPositonInStyle(elem, position) {
   if (
     position.top < playingField.offsetHeight - elem.offsetHeight + clickTop &&
     position.left < playingField.offsetWidth - elem.offsetWidth + clickLeft &&
-    position.left - clickLeft > 0 &&
-    position.top - clickTop > 0
+    position.left - clickLeft >= 0 &&
+    position.top - clickTop >= 0
   ) {
-    console.log(position);
     if (clickTop === 0 && clickLeft === 0) {
       elem.style.top = `${position.top}px`;
       elem.style.left = `${position.left}px`;
+    } else if (clickTop === position.top && clickLeft === position.left) {
+      elem.style.top = `${position.top - sizeCircle / 2}px`;
+      elem.style.left = `${position.left - sizeCircle / 2}px`;
     } else {
+      console.log(elem, position);
       elem.style.top = `${position.top - clickTop}px`;
       elem.style.left = `${position.left - clickLeft}px`;
     }
@@ -146,6 +150,8 @@ function addEventHandlersForCircle() {
 }
 
 playingField.addEventListener('dblclick', (e) => {
+  clickTop = e.y - e.target.getBoundingClientRect().top;
+  clickLeft = e.x - e.target.getBoundingClientRect().left;
   createCercle();
 });
 
