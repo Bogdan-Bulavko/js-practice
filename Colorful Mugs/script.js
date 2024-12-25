@@ -42,8 +42,8 @@ function generateHex(data) {
   return color;
 }
 
-function chekDataPosition(data, top, left) {
-  return data.every((item) => {
+function chekDataPosition(top, left) {
+  return dataCircle.every((item) => {
     if (
       (top > item.top + sizeCircle || top < item.top - sizeCircle / 2) &&
       (left > item.left + sizeCircle || left < item.left - sizeCircle / 2)
@@ -54,7 +54,7 @@ function chekDataPosition(data, top, left) {
   });
 }
 
-function generatePosition(data) {
+function generatePosition() {
   let top = Math.floor(
     Math.random() * (playingField.clientHeight - sizeCircle)
   );
@@ -63,13 +63,13 @@ function generatePosition(data) {
     Math.random() * (playingField.clientWidth - sizeCircle)
   );
 
-  if (chekDataPosition(data, top, left)) {
+  if (chekDataPosition(top, left)) {
     return {
       top: top,
       left: left,
     };
   }
-  return generatePosition(data);
+  return generatePosition();
 }
 
 function createCercle() {
@@ -85,7 +85,7 @@ function createCercle() {
     dataCircle.length < quantityCircle
       ? generatePosition(dataCircle)
       : { top: clickTop, left: clickLeft };
-
+  console.log(dataCircle.length, quantityCircle, position);
   dataCircle.push({ id: `#id-${hex}`, ...position });
 
   setPositonInStyle(circle, position);
@@ -101,7 +101,7 @@ function generateMugs() {
                                 height: ${sizePlayingField}px;`;
 
   for (let i = 0; i < quantityCircle; i++) {
-    createCercle(i);
+    createCercle();
   }
 }
 
@@ -121,7 +121,7 @@ function setPositonInStyle(elem, position) {
     position.left - clickLeft >= 0 &&
     position.top - clickTop >= 0
   ) {
-    console.log(position, elem);
+    // console.log(position);
     if (clickTop === 0 && clickLeft === 0) {
       // Генерация кружков при загрузке страницы
       elem.style.top = `${position.top}px`;
@@ -221,9 +221,11 @@ function setPositonInStyle(elem, position) {
   } else {
     console.log(
       position,
+      clickTop,
+      clickLeft,
       elem,
-      playingField.offsetWidth,
-      playingField.clientHeight
+      playingField.clientHeight,
+      playingField.offsetWidth
     );
   }
 }
@@ -232,18 +234,20 @@ function addEndDeleteCircle(e) {
   if (e.target.getAttribute('id') === 'playing-field') {
     clickTop = e.y - e.target.getBoundingClientRect().top;
     clickLeft = e.x - e.target.getBoundingClientRect().left;
-    if (chekDataPosition(dataCircle, clickTop, clickLeft)) {
-      createCercle();
-    } else {
-      alert(
-        `Границы кружков не должны пересекаться, размер ваших кружков ${sizeCircle}X${sizeCircle}`
-      );
-    }
+    // if (chekDataPosition(dataCircle, clickTop, clickLeft)) {
+    //   createCercle();
+    // } else {
+    //   alert(
+    //     `Границы кружков не должны пересекаться, размер ваших кружков ${sizeCircle}X${sizeCircle}`
+    //   );
+    // }
+    createCercle();
   } else {
     e.target.remove();
-    dataCircle.filter((item) => {
+    dataCircle = dataCircle.filter((item) => {
       return item.id !== '#' + e.target.getAttribute('id');
     });
+    console.log(dataCircle);
   }
 }
 
