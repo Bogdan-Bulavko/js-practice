@@ -2,9 +2,9 @@
 
 const playingField = document.querySelector('.playing-field');
 const sizeCircle = 30;
-const sizePlayingField = 400;
-const quantityCircle = 9;
-const additionalInformationAboutCircle = true;
+const sizePlayingField = 200;
+const quantityCircle = 1;
+const additionalInformationAboutCircle = false;
 let dataCircle = [];
 const dataHex = [];
 let clickTop = 0;
@@ -25,7 +25,7 @@ function generateMugs() {
     circle.style.left = `${position.left - clickLeft}px`;
 
     if (additionalInformationAboutCircle) {
-      circle.textContent = `${position.top}`;
+      circle.textContent = `${i + 1}`;
     }
   }
 }
@@ -66,15 +66,12 @@ function generateHex(data) {
 }
 
 function generatePosition() {
-  let top = Math.floor(
-    Math.random() * (playingField.clientHeight - sizeCircle)
-  );
+  let top = Math.floor(Math.random() * (sizePlayingField - sizeCircle));
 
-  let left = Math.floor(
-    Math.random() * (playingField.clientWidth - sizeCircle)
-  );
+  let left = Math.floor(Math.random() * (sizePlayingField - sizeCircle));
 
-  if (chekDataPosition(top, left)) {
+  if (checkDataPosition(top, left)) {
+    console.log(top, left);
     return {
       top: top,
       left: left,
@@ -83,12 +80,30 @@ function generatePosition() {
   return generatePosition();
 }
 
-function chekDataPosition(top, left) {
+function checkDataPosition(top, left) {
   return dataCircle.every((item) => {
     return (
-      (top > item.top + sizeCircle || top < item.top - sizeCircle / 2) &&
-      (left > item.left + sizeCircle || left < item.left - sizeCircle / 2)
+      (top > item.top + sizeCircle || top < item.top - sizeCircle) &&
+      (left > item.left + sizeCircle || left < item.left - sizeCircle)
     );
+  });
+}
+
+function checkDataPositionForDoubleClick(top, left) {
+  return dataCircle.every((item) => {
+    if (top > item.top + sizeCircle + sizeCircle / 2) {
+      return true;
+      // if (left > item.left + sizeCircle || left < item.left - sizeCircle) {
+      //   return true;
+      // }
+    } else {
+      if (
+        left > item.left + sizeCircle + sizeCircle / 2 ||
+        left < item.left - sizeCircle - sizeCircle / 2
+      ) {
+        return true;
+      }
+    }
   });
 }
 
@@ -119,13 +134,13 @@ function addCircleOnDoubleClick(e) {
     left: clickLeft - sizeCircle / 2,
   });
 
-  setPosition(circle, clickTop, clickLeft);
+  setPosition(circle);
 
   if (additionalInformationAboutCircle) {
-    circle.textContent = `${clickTop - sizeCircle / 2}`;
+    circle.textContent = `${clickTop}`;
   }
 
-  console.log(dataCircle);
+  // console.log(dataCircle);
 }
 
 function deleteCircle(e) {
@@ -149,10 +164,10 @@ function mouseMove(e) {
   let left = Math.floor(e.x - playingField.getBoundingClientRect().left);
   const elem = e.target;
   if (
-    top < playingField.offsetHeight - elem.offsetHeight + clickTop &&
-    left < playingField.offsetWidth - elem.offsetWidth + clickLeft &&
-    left - clickLeft >= 0 &&
-    top - clickTop >= 0
+    top < playingField.clientHeight - elem.clientHeight + clickTop &&
+    top - clickTop >= 0 &&
+    left < playingField.clientWidth - elem.clientWidth + clickLeft &&
+    left - clickLeft >= 0
   ) {
     elem.style.top = `${top - clickTop}px`;
     elem.style.left = `${left - clickLeft}px`;
@@ -248,7 +263,6 @@ function setPosition(elem) {
     clickTop > playingField.clientHeight - sizeCircle &&
     clickLeft > sizeCircle
   ) {
-    console.log(clickTop);
     elem.style.top = `${playingField.clientHeight - sizeCircle}px`;
     elem.style.left = `${clickLeft - sizeCircle / 2}px`;
   } else if (
@@ -264,3 +278,89 @@ function setPosition(elem) {
     elem.style.left = `${clickLeft - sizeCircle / 2}px`;
   }
 }
+
+// function setCirclePosition(elem) {
+//   const fieldHeight = playingField.clientHeight;
+//   const fieldWidth = playingField.clientWidth;
+
+//   let caseType;
+
+//   if (clickTop < sizeCircle && clickLeft < sizeCircle) {
+//     caseType = 'topLeftCorner';
+//   } else if (
+//     clickTop < sizeCircle &&
+//     clickLeft > sizeCircle &&
+//     clickLeft < fieldWidth - sizeCircle
+//   ) {
+//     caseType = 'topCenter';
+//   } else if (clickTop > fieldHeight - sizeCircle && clickLeft < sizeCircle) {
+//     caseType = 'bottomLeftCorner';
+//   } else if (clickTop < fieldHeight && clickLeft < sizeCircle) {
+//     caseType = 'middleLeft';
+//   } else if (
+//     clickTop > fieldHeight - sizeCircle &&
+//     clickLeft > fieldWidth - sizeCircle
+//   ) {
+//     caseType = 'bottomRightCorner';
+//   } else if (
+//     clickTop < fieldHeight &&
+//     clickTop > sizeCircle &&
+//     clickLeft > fieldWidth - sizeCircle
+//   ) {
+//     caseType = 'middleRight';
+//   } else if (clickTop > fieldHeight - sizeCircle && clickLeft > sizeCircle) {
+//     caseType = 'bottomCenter';
+//   } else if (clickTop < sizeCircle && clickLeft < fieldWidth) {
+//     caseType = 'topRightCorner';
+//   } else {
+//     caseType = 'freePlacement';
+//   }
+
+//   switch (caseType) {
+//     case 'topLeftCorner':
+//       elem.style.top = `${0}px`;
+//       elem.style.left = `${0}px`;
+//       break;
+
+//     case 'topCenter':
+//       elem.style.top = `${0}px`;
+//       elem.style.left = `${clickLeft - sizeCircle / 2}px`;
+//       break;
+
+//     case 'bottomLeftCorner':
+//       elem.style.top = `${fieldHeight - sizeCircle}px`;
+//       elem.style.left = `${0}px`;
+//       break;
+
+//     case 'middleLeft':
+//       elem.style.top = `${clickTop - sizeCircle / 2}px`;
+//       elem.style.left = `${0}px`;
+//       break;
+
+//     case 'bottomRightCorner':
+//       elem.style.top = `${fieldHeight - sizeCircle}px`;
+//       elem.style.left = `${fieldWidth - sizeCircle}px`;
+//       break;
+
+//     case 'middleRight':
+//       elem.style.top = `${clickTop - sizeCircle / 2}px`;
+//       elem.style.left = `${fieldWidth - sizeCircle}px`;
+//       break;
+
+//     case 'bottomCenter':
+//       elem.style.top = `${fieldHeight - sizeCircle}px`;
+//       elem.style.left = `${clickLeft - sizeCircle / 2}px`;
+//       break;
+
+//     case 'topRightCorner':
+//       elem.style.top = `${0}px`;
+//       elem.style.left = `${fieldWidth - sizeCircle}px`;
+//       break;
+
+//     case 'freePlacement':
+//     default:
+//       elem.style.top = `${clickTop - sizeCircle / 2}px`;
+//       elem.style.left = `${clickLeft - sizeCircle / 2}px`;
+//       break;
+//   }
+// }
