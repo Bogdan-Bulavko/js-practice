@@ -4,11 +4,32 @@ const playingField = document.querySelector('.playing-field');
 const sizeCircle = 30;
 const sizePlayingField = 400;
 const quantityCircle = 9;
-const additionalInformationAboutCircle = false;
+const additionalInformationAboutCircle = true;
 let dataCircle = [];
 const dataHex = [];
 let clickTop = 0;
 let clickLeft = 0;
+
+function generateMugs() {
+  playingField.style.cssText = `width: ${sizePlayingField}px;
+                                height: ${sizePlayingField}px;`;
+
+  for (let i = 0; i < quantityCircle; i++) {
+    const circle = createCircle();
+
+    const position = generatePosition();
+
+    dataCircle.push({ id: `#${circle.getAttribute('id')}`, ...position });
+
+    circle.style.top = `${position.top - clickTop}px`;
+    circle.style.left = `${position.left - clickLeft}px`;
+
+    if (additionalInformationAboutCircle) {
+      circle.textContent = `${position.top}`;
+    }
+  }
+}
+
 function generateHex(data) {
   const colorSymbol = [
     '0',
@@ -39,19 +60,9 @@ function generateHex(data) {
     return generateHex(data);
   }
 
-  return color;
-}
+  dataHex.push(color);
 
-function chekDataPosition(top, left) {
-  return dataCircle.every((item) => {
-    if (
-      (top > item.top + sizeCircle || top < item.top - sizeCircle / 2) &&
-      (left > item.left + sizeCircle || left < item.left - sizeCircle / 2)
-    ) {
-      return true;
-    }
-    return false;
-  });
+  return color;
 }
 
 function generatePosition() {
@@ -72,198 +83,184 @@ function generatePosition() {
   return generatePosition();
 }
 
-function createCercle() {
+function chekDataPosition(top, left) {
+  return dataCircle.every((item) => {
+    return (
+      (top > item.top + sizeCircle || top < item.top - sizeCircle / 2) &&
+      (left > item.left + sizeCircle || left < item.left - sizeCircle / 2)
+    );
+  });
+}
+
+function createCircle() {
   const hex = generateHex(dataHex);
 
-  dataHex.push(hex);
-
-  playingField.innerHTML += `<div class="circle" id = id-${hex}> id-${hex}</div>`;
+  playingField.innerHTML += `<div class='circle' id = 'id-${hex}'></div>`;
 
   const circle = document.querySelector(`#id-${hex}`);
-
-  const position =
-    dataCircle.length < quantityCircle
-      ? generatePosition(dataCircle)
-      : { top: clickTop, left: clickLeft };
-  console.log(dataCircle.length, quantityCircle, position);
-  dataCircle.push({ id: `#id-${hex}`, ...position });
-
-  setPositonInStyle(circle, position);
 
   circle.style.background = `#${hex}`;
   circle.style.width = `${sizeCircle}px`;
   circle.style.height = `${sizeCircle}px`;
   circle.style.fontSize = `8px`;
+
+  return circle;
 }
 
-function generateMugs() {
-  playingField.style.cssText = `width: ${sizePlayingField}px;
-                                height: ${sizePlayingField}px;`;
+function addCircleOnDoubleClick(e) {
+  clickTop = e.y - e.target.getBoundingClientRect().top;
+  clickLeft = e.x - e.target.getBoundingClientRect().left;
 
-  for (let i = 0; i < quantityCircle; i++) {
-    createCercle();
+  const circle = createCircle();
+
+  dataCircle.push({
+    id: `#${circle.getAttribute('id')}`,
+    top: clickTop - sizeCircle / 2,
+    left: clickLeft - sizeCircle / 2,
+  });
+
+  setPosition(circle, clickTop, clickLeft);
+
+  if (additionalInformationAboutCircle) {
+    circle.textContent = `${clickTop - sizeCircle / 2}`;
+  }
+
+  console.log(dataCircle);
+}
+
+function deleteCircle(e) {
+  e.target.remove();
+  dataCircle = dataCircle.filter((item) => {
+    return item.id !== '#' + e.target.getAttribute('id');
+  });
+}
+
+function mouseDown(e) {
+  clickTop = e.y - e.target.getBoundingClientRect().top;
+  clickLeft = e.x - e.target.getBoundingClientRect().left;
+
+  if (e.target.getAttribute('id') !== 'playing-field') {
+    playingField.addEventListener('mousemove', mouseMove);
   }
 }
 
-function mouseDownMoveElem(e) {
-  let top = e.clientY - playingField.getBoundingClientRect().top;
-  let left = e.clientX - playingField.getBoundingClientRect().left;
-
-  {
-    setPositonInStyle(e.target, { top: top, left: left });
-  }
-}
-
-function setPositonInStyle(elem, position) {
+function mouseMove(e) {
+  let top = Math.floor(e.y - playingField.getBoundingClientRect().top);
+  let left = Math.floor(e.x - playingField.getBoundingClientRect().left);
+  const elem = e.target;
   if (
-    position.top < playingField.offsetHeight - elem.offsetHeight + clickTop &&
-    position.left < playingField.offsetWidth - elem.offsetWidth + clickLeft &&
-    position.left - clickLeft >= 0 &&
-    position.top - clickTop >= 0
+    top < playingField.offsetHeight - elem.offsetHeight + clickTop &&
+    left < playingField.offsetWidth - elem.offsetWidth + clickLeft &&
+    left - clickLeft >= 0 &&
+    top - clickTop >= 0
   ) {
-    // console.log(position);
-    if (clickTop === 0 && clickLeft === 0) {
-      // Генерация кружков при загрузке страницы
-      elem.style.top = `${position.top}px`;
-      elem.style.left = `${position.left}px`;
-    } else if (
-      // Генерация кружка при двойном щелчке когда top и left меньше ширины кружка в левом верхнем углу
-      clickTop === position.top &&
-      clickTop < sizeCircle &&
-      clickLeft === position.left &&
-      clickLeft < sizeCircle
-    ) {
-      elem.style.top = `${position.top - clickTop}px`;
-      elem.style.left = `${position.left - clickLeft}px`;
-    } else if (
-      // Генерация кружка при двойном щелчке если left > ширины кружка, но top < высоты кружка (верхняя граница)
-      clickTop === position.top &&
-      clickTop < sizeCircle &&
-      clickTop < playingField.clientHeight &&
-      clickLeft === position.left &&
-      clickLeft > sizeCircle &&
-      clickLeft < playingField.clientWidth - sizeCircle
-    ) {
-      elem.style.top = `${position.top - clickTop}px`;
-      elem.style.left = `${position.left - sizeCircle / 2}px`;
-    } else if (
-      //Генерация кружка при двойном щелчке если left < ширины кружка, но top < высоты поля (левый нижний угол)
-      clickTop === position.top &&
-      clickTop < playingField.clientHeight &&
-      clickTop > playingField.clientHeight - sizeCircle &&
-      clickLeft === position.left &&
-      clickLeft < sizeCircle
-    ) {
-      elem.style.top = `${playingField.clientHeight - sizeCircle}px`;
-      elem.style.left = `${0}px`;
-    } else if (
-      //Генерация кружка при двойном щелчке если left < ширины кружка, но top < высоты поля отняв высоту кружка(левая граница)
-      clickTop === position.top &&
-      clickTop < playingField.clientHeight - sizeCircle &&
-      clickLeft === position.left &&
-      position.left < sizeCircle
-    ) {
-      elem.style.top = `${position.top - sizeCircle / 2}px`;
-      elem.style.left = `${position.left - clickLeft}px`;
-    } else if (
-      //Генерация кружка при двойном щелчке если left < ширины поля, но больше ширины поля отняв ширину кружка, но top < высоты поля отняв высоту кружка (правый нижний угол)
-      clickTop === position.top &&
-      clickTop < playingField.clientHeight &&
-      clickTop > playingField.clientHeight - sizeCircle &&
-      clickLeft === position.left &&
-      clickLeft < playingField.clientWidth &&
-      clickLeft > playingField.clientWidth - sizeCircle
-    ) {
-      elem.style.top = `${playingField.clientHeight - sizeCircle}px`;
-      elem.style.left = `${playingField.clientWidth - sizeCircle}px`;
-    } else if (
-      //Генерация кружка при двойном щелчке если left > ширины кружка, но top < высоты поля отняв высоту кружка (нижняя граница)
-      clickTop === position.top &&
-      clickTop < playingField.clientHeight &&
-      clickTop > playingField.clientHeight - sizeCircle &&
-      clickLeft === position.left &&
-      clickLeft > sizeCircle
-    ) {
-      elem.style.top = `${playingField.clientHeight - sizeCircle}px`;
-      elem.style.left = `${position.left - sizeCircle / 2}px`;
-    } else if (
-      //Генерация кружка при двойном щелчке если left < ширины поля, но больше ширины поля отняв ширину кружка, и top < высоты поля (правая граница)
-      clickTop === position.top &&
-      clickTop < playingField.clientHeight &&
-      clickTop > sizeCircle &&
-      clickLeft === position.left &&
-      clickLeft < playingField.clientWidth &&
-      clickLeft > playingField.clientWidth - sizeCircle
-    ) {
-      elem.style.top = `${position.top - sizeCircle / 2}px`;
-      elem.style.left = `${playingField.clientWidth - sizeCircle}px`;
-    } else if (
-      //Генерация кружка при двойном щелчке если left < ширины поля, но больше ширины поля отняв ширину кружка, и top < высоты поля и меньше высоты кружка(правый верхний угол)
-      clickTop === position.top &&
-      clickTop < playingField.clientHeight &&
-      clickTop < sizeCircle &&
-      clickLeft === position.left &&
-      clickLeft < playingField.clientWidth &&
-      clickLeft > playingField.clientWidth - sizeCircle
-    ) {
-      elem.style.top = `${0}px`;
-      elem.style.left = `${playingField.clientWidth - sizeCircle}px`;
-    } else if (clickTop === position.top && clickLeft === position.left) {
-      // Генерация кружка в свободной генерации кружка
-      elem.style.top = `${position.top - sizeCircle / 2}px`;
-      elem.style.left = `${position.left - sizeCircle / 2}px`;
-    } else {
-      // ДЛя свободного перемещения кружка
-
-      elem.style.top = `${position.top - clickTop}px`;
-      elem.style.left = `${position.left - clickLeft}px`;
+    elem.style.top = `${top - clickTop}px`;
+    elem.style.left = `${left - clickLeft}px`;
+    if (additionalInformationAboutCircle) {
+      elem.textContent = `${top - clickTop}`;
     }
-  } else {
-    console.log(
-      position,
-      clickTop,
-      clickLeft,
-      elem,
-      playingField.clientHeight,
-      playingField.offsetWidth
-    );
   }
 }
-
-function addEndDeleteCircle(e) {
-  if (e.target.getAttribute('id') === 'playing-field') {
-    clickTop = e.y - e.target.getBoundingClientRect().top;
-    clickLeft = e.x - e.target.getBoundingClientRect().left;
-    // if (chekDataPosition(dataCircle, clickTop, clickLeft)) {
-    //   createCercle();
-    // } else {
-    //   alert(
-    //     `Границы кружков не должны пересекаться, размер ваших кружков ${sizeCircle}X${sizeCircle}`
-    //   );
-    // }
-    createCercle();
-  } else {
-    e.target.remove();
-    dataCircle = dataCircle.filter((item) => {
-      return item.id !== '#' + e.target.getAttribute('id');
-    });
-    console.log(dataCircle);
-  }
-}
-
-function addEventHandlersForCircle() {
-  playingField.addEventListener('mousedown', (e) => {
-    clickTop = e.y - e.target.getBoundingClientRect().top;
-    clickLeft = e.x - e.target.getBoundingClientRect().left;
-    playingField.addEventListener('mousemove', mouseDownMoveElem);
-  });
-  playingField.addEventListener('mouseup', () => {
-    playingField.removeEventListener('mousemove', mouseDownMoveElem);
-  });
-}
-
-playingField.addEventListener('dblclick', addEndDeleteCircle);
 
 generateMugs();
-addEventHandlersForCircle();
-console.log(dataCircle);
+
+playingField.addEventListener('mousedown', mouseDown);
+
+playingField.addEventListener('mouseup', (e) => {
+  if (e.target.getAttribute('id') !== 'playing-field') {
+    dataCircle = dataCircle.map((item) => {
+      if (item.id === '#' + e.target.getAttribute('id')) {
+        return {
+          ...item,
+          top:
+            e.target.getBoundingClientRect().top -
+            playingField.getBoundingClientRect().top -
+            1,
+          left:
+            e.target.getBoundingClientRect().left -
+            playingField.getBoundingClientRect().left -
+            1,
+        };
+      }
+      return item;
+    });
+  }
+
+  playingField.removeEventListener('mousemove', mouseMove);
+});
+
+playingField.addEventListener('dblclick', (e) => {
+  if (e.target.getAttribute('id') === 'playing-field') {
+    addCircleOnDoubleClick(e);
+  } else {
+    deleteCircle(e);
+  }
+});
+
+function setPosition(elem) {
+  if (
+    // Генерация кружка при двойном щелчке когда top и left меньше ширины кружка в левом верхнем углу
+    clickTop < sizeCircle &&
+    clickLeft < sizeCircle
+  ) {
+    elem.style.top = `${0}px`;
+    elem.style.left = `${0}px`;
+  } else if (
+    // Генерация кружка при двойном щелчке если left > ширины кружка, но top < высоты кружка (верхняя граница)
+    clickTop < sizeCircle &&
+    clickTop < playingField.clientHeight &&
+    clickLeft > sizeCircle &&
+    clickLeft < playingField.clientWidth - sizeCircle
+  ) {
+    elem.style.top = `${0}px`;
+    elem.style.left = `${clickLeft - sizeCircle / 2}px`;
+  } else if (
+    //Генерация кружка при двойном щелчке если left < ширины кружка, но top < высоты поля (левый нижний угол)
+    clickTop > playingField.clientHeight - sizeCircle &&
+    clickLeft < sizeCircle
+  ) {
+    elem.style.top = `${playingField.clientHeight - sizeCircle}px`;
+    elem.style.left = `${0}px`;
+  } else if (
+    //Генерация кружка при двойном щелчке если left < ширины кружка, но top < высоты поля отняв высоту кружка(левая граница)
+    clickTop < playingField.clientHeight &&
+    clickLeft < sizeCircle
+  ) {
+    elem.style.top = `${clickTop - sizeCircle / 2}px`;
+    elem.style.left = `${0}px`;
+  } else if (
+    //Генерация кружка при двойном щелчке если left < ширины поля, но больше ширины поля отняв ширину кружка, но top < высоты поля отняв высоту кружка (правый нижний угол)
+    clickTop > playingField.clientHeight - sizeCircle &&
+    clickLeft > playingField.clientWidth - sizeCircle
+  ) {
+    elem.style.top = `${playingField.clientHeight - sizeCircle}px`;
+    elem.style.left = `${playingField.clientWidth - sizeCircle}px`;
+  } else if (
+    //Генерация кружка при двойном щелчке если left < ширины поля, но больше ширины поля отняв ширину кружка, и top < высоты поля (правая граница)
+    clickTop < playingField.clientHeight &&
+    clickTop > sizeCircle &&
+    clickLeft > playingField.clientWidth - sizeCircle
+  ) {
+    elem.style.top = `${clickTop - sizeCircle / 2}px`;
+    elem.style.left = `${playingField.clientWidth - sizeCircle}px`;
+  } else if (
+    //Генерация кружка при двойном щелчке если left > ширины кружка, но top < высоты поля отняв высоту кружка (нижняя граница)
+    clickTop > playingField.clientHeight - sizeCircle &&
+    clickLeft > sizeCircle
+  ) {
+    console.log(clickTop);
+    elem.style.top = `${playingField.clientHeight - sizeCircle}px`;
+    elem.style.left = `${clickLeft - sizeCircle / 2}px`;
+  } else if (
+    //Генерация кружка при двойном щелчке если left < ширины поля, но больше ширины поля отняв ширину кружка, и top < высоты поля и меньше высоты кружка(правый верхний угол)
+    clickTop < sizeCircle &&
+    clickLeft < playingField.clientWidth
+  ) {
+    elem.style.top = `${0}px`;
+    elem.style.left = `${playingField.clientWidth - sizeCircle}px`;
+  } else {
+    // Генерация кружка в свободной генерации кружка
+    elem.style.top = `${clickTop - sizeCircle / 2}px`;
+    elem.style.left = `${clickLeft - sizeCircle / 2}px`;
+  }
+}
