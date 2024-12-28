@@ -1,10 +1,10 @@
 'use strict';
 
 const playingField = document.querySelector('.playing-field');
-const sizeCircle = 30;
-const sizePlayingField = 200;
-const quantityCircle = 1;
-const additionalInformationAboutCircle = false;
+const sizeCircle = 20;
+const sizePlayingField = 100;
+const quantityCircle = 3;
+const additionalInformationAboutCircle = true;
 let dataCircle = [];
 const dataHex = [];
 let clickTop = 0;
@@ -19,13 +19,13 @@ function generateMugs() {
 
     const position = generatePosition();
 
-    dataCircle.push({ id: `#${circle.getAttribute('id')}`, ...position });
+    addDataCircle(`#${circle.getAttribute('id')}`, position.top, position.left);
 
     circle.style.top = `${position.top - clickTop}px`;
     circle.style.left = `${position.left - clickLeft}px`;
 
     if (additionalInformationAboutCircle) {
-      circle.textContent = `${i + 1}`;
+      circle.textContent = `${position.top}`;
     }
   }
 }
@@ -90,27 +90,13 @@ function checkDataPosition(top, left) {
 }
 
 function checkDataPositionForDoubleClick(top, left) {
-  return dataCircle.every((item) => {
-    if (top > item.top + sizeCircle + sizeCircle / 2) {
-      return true;
-      // if (left > item.left + sizeCircle || left < item.left - sizeCircle) {
-      //   return true;
-      // }
-    } else {
-      if (
-        left > item.left + sizeCircle + sizeCircle / 2 ||
-        left < item.left - sizeCircle - sizeCircle / 2
-      ) {
-        return true;
-      }
-    }
-  });
+  return true;
 }
 
 function createCircle() {
   const hex = generateHex(dataHex);
 
-  playingField.innerHTML += `<div class='circle' id = 'id-${hex}'></div>`;
+  playingField.innerHTML += `<div class='circle' id ='id-${hex}'></div>`;
 
   const circle = document.querySelector(`#id-${hex}`);
 
@@ -128,19 +114,58 @@ function addCircleOnDoubleClick(e) {
 
   const circle = createCircle();
 
-  dataCircle.push({
-    id: `#${circle.getAttribute('id')}`,
-    top: clickTop - sizeCircle / 2,
-    left: clickLeft - sizeCircle / 2,
-  });
+  if (
+    clickTop < sizePlayingField - sizeCircle &&
+    clickLeft < sizePlayingField - sizeCircle
+  ) {
+    circle.style.top = clickTop + 'px';
+    circle.style.left = clickLeft + 'px';
 
-  setPosition(circle);
+    addDataCircle(`#${circle.getAttribute('id')}`, clickTop, clickLeft);
+  } else if (
+    clickTop > sizePlayingField - sizeCircle &&
+    clickLeft > sizePlayingField - sizeCircle
+  ) {
+    circle.style.top = clickTop - sizeCircle + 'px';
+    circle.style.left = clickLeft - sizeCircle + 'px';
 
-  if (additionalInformationAboutCircle) {
-    circle.textContent = `${clickTop}`;
+    addDataCircle(
+      `#${circle.getAttribute('id')}`,
+      clickTop - sizeCircle,
+      clickLeft - sizeCircle
+    );
+  } else if (clickTop > sizePlayingField - sizeCircle) {
+    circle.style.top = clickTop - sizeCircle + 'px';
+    circle.style.left = clickLeft + 'px';
+
+    addDataCircle(
+      `#${circle.getAttribute('id')}`,
+      clickTop - sizeCircle,
+      clickLeft
+    );
+  } else {
+    circle.style.top = clickTop + 'px';
+    circle.style.left = clickLeft - sizeCircle + 'px';
+
+    addDataCircle(
+      `#${circle.getAttribute('id')}`,
+      clickTop,
+      clickLeft - sizeCircle
+    );
   }
 
-  // console.log(dataCircle);
+  // if (additionalInformationAboutCircle) {
+  //   circle.textContent = `${clickTop}`;
+  // }
+  console.log(clickTop, clickLeft);
+}
+
+function addDataCircle(id, top, left) {
+  dataCircle.push({
+    id: id,
+    top: top,
+    left: left,
+  });
 }
 
 function deleteCircle(e) {
@@ -164,16 +189,16 @@ function mouseMove(e) {
   let left = Math.floor(e.x - playingField.getBoundingClientRect().left);
   const elem = e.target;
   if (
-    top < playingField.clientHeight - elem.clientHeight + clickTop &&
+    top < playingField.offsetHeight - elem.offsetHeight + clickTop &&
     top - clickTop >= 0 &&
-    left < playingField.clientWidth - elem.clientWidth + clickLeft &&
+    left < playingField.offsetWidth - elem.offsetWidth + clickLeft &&
     left - clickLeft >= 0
   ) {
     elem.style.top = `${top - clickTop}px`;
     elem.style.left = `${left - clickLeft}px`;
-    if (additionalInformationAboutCircle) {
-      elem.textContent = `${top - clickTop}`;
-    }
+  }
+  if (additionalInformationAboutCircle) {
+    elem.textContent = `${top - clickTop}`;
   }
 }
 
@@ -211,156 +236,3 @@ playingField.addEventListener('dblclick', (e) => {
     deleteCircle(e);
   }
 });
-
-function setPosition(elem) {
-  if (
-    // Генерация кружка при двойном щелчке когда top и left меньше ширины кружка в левом верхнем углу
-    clickTop < sizeCircle &&
-    clickLeft < sizeCircle
-  ) {
-    elem.style.top = `${0}px`;
-    elem.style.left = `${0}px`;
-  } else if (
-    // Генерация кружка при двойном щелчке если left > ширины кружка, но top < высоты кружка (верхняя граница)
-    clickTop < sizeCircle &&
-    clickTop < playingField.clientHeight &&
-    clickLeft > sizeCircle &&
-    clickLeft < playingField.clientWidth - sizeCircle
-  ) {
-    elem.style.top = `${0}px`;
-    elem.style.left = `${clickLeft - sizeCircle / 2}px`;
-  } else if (
-    //Генерация кружка при двойном щелчке если left < ширины кружка, но top < высоты поля (левый нижний угол)
-    clickTop > playingField.clientHeight - sizeCircle &&
-    clickLeft < sizeCircle
-  ) {
-    elem.style.top = `${playingField.clientHeight - sizeCircle}px`;
-    elem.style.left = `${0}px`;
-  } else if (
-    //Генерация кружка при двойном щелчке если left < ширины кружка, но top < высоты поля отняв высоту кружка(левая граница)
-    clickTop < playingField.clientHeight &&
-    clickLeft < sizeCircle
-  ) {
-    elem.style.top = `${clickTop - sizeCircle / 2}px`;
-    elem.style.left = `${0}px`;
-  } else if (
-    //Генерация кружка при двойном щелчке если left < ширины поля, но больше ширины поля отняв ширину кружка, но top < высоты поля отняв высоту кружка (правый нижний угол)
-    clickTop > playingField.clientHeight - sizeCircle &&
-    clickLeft > playingField.clientWidth - sizeCircle
-  ) {
-    elem.style.top = `${playingField.clientHeight - sizeCircle}px`;
-    elem.style.left = `${playingField.clientWidth - sizeCircle}px`;
-  } else if (
-    //Генерация кружка при двойном щелчке если left < ширины поля, но больше ширины поля отняв ширину кружка, и top < высоты поля (правая граница)
-    clickTop < playingField.clientHeight &&
-    clickTop > sizeCircle &&
-    clickLeft > playingField.clientWidth - sizeCircle
-  ) {
-    elem.style.top = `${clickTop - sizeCircle / 2}px`;
-    elem.style.left = `${playingField.clientWidth - sizeCircle}px`;
-  } else if (
-    //Генерация кружка при двойном щелчке если left > ширины кружка, но top < высоты поля отняв высоту кружка (нижняя граница)
-    clickTop > playingField.clientHeight - sizeCircle &&
-    clickLeft > sizeCircle
-  ) {
-    elem.style.top = `${playingField.clientHeight - sizeCircle}px`;
-    elem.style.left = `${clickLeft - sizeCircle / 2}px`;
-  } else if (
-    //Генерация кружка при двойном щелчке если left < ширины поля, но больше ширины поля отняв ширину кружка, и top < высоты поля и меньше высоты кружка(правый верхний угол)
-    clickTop < sizeCircle &&
-    clickLeft < playingField.clientWidth
-  ) {
-    elem.style.top = `${0}px`;
-    elem.style.left = `${playingField.clientWidth - sizeCircle}px`;
-  } else {
-    // Генерация кружка в свободной генерации кружка
-    elem.style.top = `${clickTop - sizeCircle / 2}px`;
-    elem.style.left = `${clickLeft - sizeCircle / 2}px`;
-  }
-}
-
-// function setCirclePosition(elem) {
-//   const fieldHeight = playingField.clientHeight;
-//   const fieldWidth = playingField.clientWidth;
-
-//   let caseType;
-
-//   if (clickTop < sizeCircle && clickLeft < sizeCircle) {
-//     caseType = 'topLeftCorner';
-//   } else if (
-//     clickTop < sizeCircle &&
-//     clickLeft > sizeCircle &&
-//     clickLeft < fieldWidth - sizeCircle
-//   ) {
-//     caseType = 'topCenter';
-//   } else if (clickTop > fieldHeight - sizeCircle && clickLeft < sizeCircle) {
-//     caseType = 'bottomLeftCorner';
-//   } else if (clickTop < fieldHeight && clickLeft < sizeCircle) {
-//     caseType = 'middleLeft';
-//   } else if (
-//     clickTop > fieldHeight - sizeCircle &&
-//     clickLeft > fieldWidth - sizeCircle
-//   ) {
-//     caseType = 'bottomRightCorner';
-//   } else if (
-//     clickTop < fieldHeight &&
-//     clickTop > sizeCircle &&
-//     clickLeft > fieldWidth - sizeCircle
-//   ) {
-//     caseType = 'middleRight';
-//   } else if (clickTop > fieldHeight - sizeCircle && clickLeft > sizeCircle) {
-//     caseType = 'bottomCenter';
-//   } else if (clickTop < sizeCircle && clickLeft < fieldWidth) {
-//     caseType = 'topRightCorner';
-//   } else {
-//     caseType = 'freePlacement';
-//   }
-
-//   switch (caseType) {
-//     case 'topLeftCorner':
-//       elem.style.top = `${0}px`;
-//       elem.style.left = `${0}px`;
-//       break;
-
-//     case 'topCenter':
-//       elem.style.top = `${0}px`;
-//       elem.style.left = `${clickLeft - sizeCircle / 2}px`;
-//       break;
-
-//     case 'bottomLeftCorner':
-//       elem.style.top = `${fieldHeight - sizeCircle}px`;
-//       elem.style.left = `${0}px`;
-//       break;
-
-//     case 'middleLeft':
-//       elem.style.top = `${clickTop - sizeCircle / 2}px`;
-//       elem.style.left = `${0}px`;
-//       break;
-
-//     case 'bottomRightCorner':
-//       elem.style.top = `${fieldHeight - sizeCircle}px`;
-//       elem.style.left = `${fieldWidth - sizeCircle}px`;
-//       break;
-
-//     case 'middleRight':
-//       elem.style.top = `${clickTop - sizeCircle / 2}px`;
-//       elem.style.left = `${fieldWidth - sizeCircle}px`;
-//       break;
-
-//     case 'bottomCenter':
-//       elem.style.top = `${fieldHeight - sizeCircle}px`;
-//       elem.style.left = `${clickLeft - sizeCircle / 2}px`;
-//       break;
-
-//     case 'topRightCorner':
-//       elem.style.top = `${0}px`;
-//       elem.style.left = `${fieldWidth - sizeCircle}px`;
-//       break;
-
-//     case 'freePlacement':
-//     default:
-//       elem.style.top = `${clickTop - sizeCircle / 2}px`;
-//       elem.style.left = `${clickLeft - sizeCircle / 2}px`;
-//       break;
-//   }
-// }
