@@ -3,7 +3,7 @@
 const playingField = document.querySelector('.playing-field');
 const sizeCircle = 100;
 const sizePlayingField = 1000;
-const quantityCircle = 15;
+const quantityCircle = 10;
 const additionalInformationAboutCircle = false;
 let dataCircle = [];
 const dataHex = [];
@@ -90,9 +90,10 @@ function generatePosition(id) {
 function checkCoord(top, left) {
   return dataCircle.every((circle) => {
     const distance = Math.sqrt(
-      Math.pow(left - (circle.left + (sizeCircle / 2)), 2) + Math.pow(top - (circle.top + (sizeCircle / 2)), 2)
+      Math.pow(left - (circle.left + sizeCircle / 2), 2) +
+        Math.pow(top - (circle.top + sizeCircle / 2), 2)
     );
-  
+
     // console.log('distance', distance);
     return distance > sizeCircle;
   });
@@ -223,7 +224,7 @@ function mouseMove(e) {
 
       return item;
     });
-  
+
     playingField.removeEventListener('mousemove', mouseMove);
   });
 }
@@ -274,156 +275,3 @@ playingField.addEventListener('dblclick', (e) => {
     deleteCircle(e);
   }
 });
-
-function setPosition(elem) {
-  if (
-    // Генерация кружка при двойном щелчке когда top и left меньше ширины кружка в левом верхнем углу
-    clickTop < sizeCircle &&
-    clickLeft < sizeCircle
-  ) {
-    elem.style.top = `${0}px`;
-    elem.style.left = `${0}px`;
-  } else if (
-    // Генерация кружка при двойном щелчке если left > ширины кружка, но top < высоты кружка (верхняя граница)
-    clickTop < sizeCircle &&
-    clickTop < playingField.clientHeight &&
-    clickLeft > sizeCircle &&
-    clickLeft < playingField.clientWidth - sizeCircle
-  ) {
-    elem.style.top = `${0}px`;
-    elem.style.left = `${clickLeft - sizeCircle / 2}px`;
-  } else if (
-    //Генерация кружка при двойном щелчке если left < ширины кружка, но top < высоты поля (левый нижний угол)
-    clickTop > playingField.clientHeight - sizeCircle &&
-    clickLeft < sizeCircle
-  ) {
-    elem.style.top = `${playingField.clientHeight - sizeCircle}px`;
-    elem.style.left = `${0}px`;
-  } else if (
-    //Генерация кружка при двойном щелчке если left < ширины кружка, но top < высоты поля отняв высоту кружка(левая граница)
-    clickTop < playingField.clientHeight &&
-    clickLeft < sizeCircle
-  ) {
-    elem.style.top = `${clickTop - sizeCircle / 2}px`;
-    elem.style.left = `${0}px`;
-  } else if (
-    //Генерация кружка при двойном щелчке если left < ширины поля, но больше ширины поля отняв ширину кружка, но top < высоты поля отняв высоту кружка (правый нижний угол)
-    clickTop > playingField.clientHeight - sizeCircle &&
-    clickLeft > playingField.clientWidth - sizeCircle
-  ) {
-    elem.style.top = `${playingField.clientHeight - sizeCircle}px`;
-    elem.style.left = `${playingField.clientWidth - sizeCircle}px`;
-  } else if (
-    //Генерация кружка при двойном щелчке если left < ширины поля, но больше ширины поля отняв ширину кружка, и top < высоты поля (правая граница)
-    clickTop < playingField.clientHeight &&
-    clickTop > sizeCircle &&
-    clickLeft > playingField.clientWidth - sizeCircle
-  ) {
-    elem.style.top = `${clickTop - sizeCircle / 2}px`;
-    elem.style.left = `${playingField.clientWidth - sizeCircle}px`;
-  } else if (
-    //Генерация кружка при двойном щелчке если left > ширины кружка, но top < высоты поля отняв высоту кружка (нижняя граница)
-    clickTop > playingField.clientHeight - sizeCircle &&
-    clickLeft > sizeCircle
-  ) {
-    elem.style.top = `${playingField.clientHeight - sizeCircle}px`;
-    elem.style.left = `${clickLeft - sizeCircle / 2}px`;
-  } else if (
-    //Генерация кружка при двойном щелчке если left < ширины поля, но больше ширины поля отняв ширину кружка, и top < высоты поля и меньше высоты кружка(правый верхний угол)
-    clickTop < sizeCircle &&
-    clickLeft < playingField.clientWidth
-  ) {
-    elem.style.top = `${0}px`;
-    elem.style.left = `${playingField.clientWidth - sizeCircle}px`;
-  } else {
-    // Генерация кружка в свободной генерации кружка
-    elem.style.top = `${clickTop - sizeCircle / 2}px`;
-    elem.style.left = `${clickLeft - sizeCircle / 2}px`;
-  }
-}
-
-// function setCirclePosition(elem) {
-//   const fieldHeight = playingField.clientHeight;
-//   const fieldWidth = playingField.clientWidth;
-
-//   let caseType;
-
-//   if (clickTop < sizeCircle && clickLeft < sizeCircle) {
-//     caseType = 'topLeftCorner';
-//   } else if (
-//     clickTop < sizeCircle &&
-//     clickLeft > sizeCircle &&
-//     clickLeft < fieldWidth - sizeCircle
-//   ) {
-//     caseType = 'topCenter';
-//   } else if (clickTop > fieldHeight - sizeCircle && clickLeft < sizeCircle) {
-//     caseType = 'bottomLeftCorner';
-//   } else if (clickTop < fieldHeight && clickLeft < sizeCircle) {
-//     caseType = 'middleLeft';
-//   } else if (
-//     clickTop > fieldHeight - sizeCircle &&
-//     clickLeft > fieldWidth - sizeCircle
-//   ) {
-//     caseType = 'bottomRightCorner';
-//   } else if (
-//     clickTop < fieldHeight &&
-//     clickTop > sizeCircle &&
-//     clickLeft > fieldWidth - sizeCircle
-//   ) {
-//     caseType = 'middleRight';
-//   } else if (clickTop > fieldHeight - sizeCircle && clickLeft > sizeCircle) {
-//     caseType = 'bottomCenter';
-//   } else if (clickTop < sizeCircle && clickLeft < fieldWidth) {
-//     caseType = 'topRightCorner';
-//   } else {
-//     caseType = 'freePlacement';
-//   }
-
-//   switch (caseType) {
-//     case 'topLeftCorner':
-//       elem.style.top = `${0}px`;
-//       elem.style.left = `${0}px`;
-//       break;
-
-//     case 'topCenter':
-//       elem.style.top = `${0}px`;
-//       elem.style.left = `${clickLeft - sizeCircle / 2}px`;
-//       break;
-
-//     case 'bottomLeftCorner':
-//       elem.style.top = `${fieldHeight - sizeCircle}px`;
-//       elem.style.left = `${0}px`;
-//       break;
-
-//     case 'middleLeft':
-//       elem.style.top = `${clickTop - sizeCircle / 2}px`;
-//       elem.style.left = `${0}px`;
-//       break;
-
-//     case 'bottomRightCorner':
-//       elem.style.top = `${fieldHeight - sizeCircle}px`;
-//       elem.style.left = `${fieldWidth - sizeCircle}px`;
-//       break;
-
-//     case 'middleRight':
-//       elem.style.top = `${clickTop - sizeCircle / 2}px`;
-//       elem.style.left = `${fieldWidth - sizeCircle}px`;
-//       break;
-
-//     case 'bottomCenter':
-//       elem.style.top = `${fieldHeight - sizeCircle}px`;
-//       elem.style.left = `${clickLeft - sizeCircle / 2}px`;
-//       break;
-
-//     case 'topRightCorner':
-//       elem.style.top = `${0}px`;
-//       elem.style.left = `${fieldWidth - sizeCircle}px`;
-//       break;
-
-//     case 'freePlacement':
-//     default:
-//       elem.style.top = `${clickTop - sizeCircle / 2}px`;
-//       elem.style.left = `${clickLeft - sizeCircle / 2}px`;
-//       break;
-//   }
-// }
