@@ -1,0 +1,128 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 100%; /* Устанавливаем базовый размер шрифта */
+}
+
+body {
+  line-height: 1.5; /* Устанавливаем высоту строки для лучшей читаемости */
+  font-family: Arial, sans-serif; /* Устанавливаем шрифт по умолчанию */
+}
+
+/* Сброс стилей для заголовков */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: normal; /* Сбрасываем начальное значение жирности */
+}
+
+/* Сброс стилей для списков */
+ul,
+ol {
+  list-style: none; /* Убираем маркеры и номера */
+}
+
+/* Сброс стилей для ссылок */
+a {
+  text-decoration: none; /* Убираем подчеркивание */
+  color: inherit; /* Унаследуем цвет от родителя */
+}
+
+/* Сброс стилей для таблиц */
+table {
+  border-collapse: collapse; /* Убираем пробелы между ячейками */
+}
+
+/* Сброс стилей для изображений */
+img {
+  max-width: 100%; /* Ограничиваем ширину изображений */
+  height: auto; /* Сохраняем пропорции изображений */
+}
+
+body {
+  padding: 100px 100px 0 100px;
+}
+
+.card-catalog {
+  margin: auto;
+  width: 1200px;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.pokemon-card {
+  margin: auto;
+  width: 250px;
+}
+
+.pokemon-card__image {
+  height: 230px;
+  border-radius: 10px;
+}
+
+.pokemon-card__image--stub {
+  width: 100%;
+  height: 100%;
+  background: rgb(219, 219, 219);
+}
+
+.pokemon-card__info {
+  padding: 0 20px 20px 20px;
+}
+
+.pokemon-card__id {
+  margin-bottom: 25px;
+  color: gray;
+}
+
+.pokemon-card__name {
+  margin-bottom: 5px;
+}
+
+.pokemon-card__set-of-forces {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.pokemon-card__type-of-force {
+  margin-bottom: 5px;
+  margin-right: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100px;
+  height: 30px;
+  border-radius: 5px;
+}
+
+.type-of-force--Grass {
+  color: black;
+  background: #6bff08;
+}
+
+.type-of-force--Poison {
+  color: white;
+  background: #ce08ff;
+}
+
+.type-of-force--Fire {
+  color: white;
+  background: #ff9408;
+}
+
+.type-of-force--Flying {
+  color: black;
+  background: #08c5ff;
+}
+
+.type-of-force--Water {
+  color: white;
+  background: #084aff;
+}
