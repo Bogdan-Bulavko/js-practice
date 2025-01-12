@@ -48,18 +48,23 @@ img {
 
 body {
   padding: 100px 100px 0 100px;
+  background: url(./image/container_bg.png);
 }
 
 .card-catalog {
+  padding: 15px;
   margin: auto;
-  width: 1200px;
+  width: 1024px;
   display: flex;
   flex-wrap: wrap;
+  background: white;
 }
 
 .pokemon-card {
   margin: auto;
-  width: 250px;
+  width: 205px;
+  background: white;
+  margin-bottom: 50px;
 }
 
 .pokemon-card__image {
@@ -92,13 +97,11 @@ body {
 }
 
 .pokemon-card__type-of-force {
-  margin-bottom: 5px;
   margin-right: 5px;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 100px;
-  height: 30px;
+  width: 70px;
   border-radius: 5px;
 }
 
