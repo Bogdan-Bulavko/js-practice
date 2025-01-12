@@ -23,14 +23,14 @@ function generatePokemonCard(pokemon) {
   let TypeOfForce = '';
 
   setOfForces.forEach((force) => {
-    TypeOfForce += `<p class="pokemon-card__type-of-force type-of-force--${force}">${force}</p>`;
+    TypeOfForce += `<div class="pokemon-card__type-of-force type-of-force--${force}">${force}</div>`;
   });
 
   cardCatalog.insertAdjacentHTML(
     'beforeend',
     `     <div class="pokemon-card">
             <div class="pokemon-card__image">
-              <img src="${
+              <img class="imgPC "src="${
                 img === '' ? './image/not-images.png' : img
               }" alt="image pokemon">
             </div>
