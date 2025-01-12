@@ -30,7 +30,9 @@ function generatePokemonCard(pokemon) {
     'beforeend',
     `     <div class="pokemon-card">
             <div class="pokemon-card__image">
-              <img ${img ? 'src=' + img : "class='pokemon-card__image--stub'"}>
+              <img src="${
+                img === '' ? './image/not-images.png' : img
+              }" alt="image pokemon">
             </div>
             <div class="pokemon-card__info">
               <p class="pokemon-card__id">${id}</p>
