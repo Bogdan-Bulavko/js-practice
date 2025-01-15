@@ -54,7 +54,7 @@ body {
 .card-catalog {
   padding: 15px;
   margin: auto;
-  width: 1024px;
+  max-width: 1024px;
   display: flex;
   flex-wrap: wrap;
   background: white;
@@ -128,4 +128,11 @@ body {
 .type-of-force--Water {
   color: white;
   background: #084aff;
+}
+
+/* Адаптирование */
+@media screen and (max-width: 500px) {
+  body {
+    padding: 50px 50px 0 50px;
+  }
 }
