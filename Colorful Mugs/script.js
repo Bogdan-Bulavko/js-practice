@@ -1,22 +1,20 @@
 'use strict';
 
 const playingField = document.querySelector('.playing-field');
-const sizeCircle = 20;
-const sizePlayingField = 100;
-const quantityCircle = 3;
-const additionalInformationAboutCircle = true;
+const sizeCircle = 100;
+const sizePlayingField = 1000;
+const quantityCircle = 10;
+const additionalInformationAboutCircle = false;
 let dataCircle = [];
 const dataHex = [];
 let clickTop = 0;
 let clickLeft = 0;
 
 function generateMugs() {
-  playingField.style.cssText = `width: ${sizePlayingField}px;
-                                height: ${sizePlayingField}px;`;
+  playingField.style.cssText = `width: ${sizePlayingField}px; height: ${sizePlayingField}px;`;
 
   for (let i = 0; i < quantityCircle; i++) {
     const circle = createCircle();
-
     const position = generatePosition();
 
     addDataCircle(`#${circle.getAttribute('id')}`, position.top, position.left);
@@ -65,33 +63,60 @@ function generateHex(data) {
   return color;
 }
 
-function generatePosition() {
-  let top = Math.floor(Math.random() * (sizePlayingField - sizeCircle));
+function generatePosition(id) {
+  const top = Math.floor(Math.random() * (sizePlayingField - sizeCircle));
+  const left = Math.floor(Math.random() * (sizePlayingField - sizeCircle));
 
-  let left = Math.floor(Math.random() * (sizePlayingField - sizeCircle));
-
-  if (checkDataPosition(top, left)) {
-    console.log(top, left);
+  if (checkCoord(top, left)) {
     return {
       top: top,
       left: left,
     };
   }
-  return generatePosition();
+
+  return generatePosition(id);
 }
 
-function checkDataPosition(top, left) {
-  return dataCircle.every((item) => {
-    return (
-      (top > item.top + sizeCircle || top < item.top - sizeCircle) &&
-      (left > item.left + sizeCircle || left < item.left - sizeCircle)
+// !!! deprecated
+// function checkDataPosition(top, left) {
+//   return dataCircle.every((item) => {
+//     return (
+//       (top > item.top + sizeCircle || top < item.top - sizeCircle) &&
+//       (left > item.left + sizeCircle || left < item.left - sizeCircle)
+//     );
+//   });
+// }
+
+function checkCoord(top, left) {
+  return dataCircle.every((circle) => {
+    const distance = Math.sqrt(
+      Math.pow(left - (circle.left + sizeCircle / 2), 2) +
+        Math.pow(top - (circle.top + sizeCircle / 2), 2)
     );
+
+    // console.log('distance', distance);
+    return distance > sizeCircle;
   });
 }
 
-function checkDataPositionForDoubleClick(top, left) {
-  return true;
-}
+// !!! deprecated
+// function checkDataPositionForDoubleClick(top, left) {
+//   return dataCircle.every((item) => {
+//     if (top > item.top + sizeCircle + sizeCircle / 2) {
+//       return true;
+//       // if (left > item.left + sizeCircle || left < item.left - sizeCircle) {
+//       //   return true;
+//       // }
+//     } else {
+//       if (
+//         left > item.left + sizeCircle + sizeCircle / 2 ||
+//         left < item.left - sizeCircle - sizeCircle / 2
+//       ) {
+//         return true;
+//       }
+//     }
+//   });
+// }
 
 function createCircle() {
   const hex = generateHex(dataHex);
@@ -109,63 +134,40 @@ function createCircle() {
 }
 
 function addCircleOnDoubleClick(e) {
-  clickTop = e.y - e.target.getBoundingClientRect().top;
-  clickLeft = e.x - e.target.getBoundingClientRect().left;
+  // console.log('addCircleOnDoubleClick', e);
 
-  const circle = createCircle();
+  const radius = sizeCircle / 2;
+  const computedPlayingFieldSize = sizePlayingField - radius;
+  const cord = playingField.getBoundingClientRect();
+  const clientX = e.clientX - cord.left;
+  const clientY = e.clientY - cord.top;
 
   if (
-    clickTop < sizePlayingField - sizeCircle &&
-    clickLeft < sizePlayingField - sizeCircle
+    clientX > computedPlayingFieldSize ||
+    clientY > computedPlayingFieldSize ||
+    clientY < radius ||
+    clientX < radius
   ) {
-    circle.style.top = clickTop + 'px';
-    circle.style.left = clickLeft + 'px';
-
-    addDataCircle(`#${circle.getAttribute('id')}`, clickTop, clickLeft);
-  } else if (
-    clickTop > sizePlayingField - sizeCircle &&
-    clickLeft > sizePlayingField - sizeCircle
-  ) {
-    circle.style.top = clickTop - sizeCircle + 'px';
-    circle.style.left = clickLeft - sizeCircle + 'px';
-
-    addDataCircle(
-      `#${circle.getAttribute('id')}`,
-      clickTop - sizeCircle,
-      clickLeft - sizeCircle
-    );
-  } else if (clickTop > sizePlayingField - sizeCircle) {
-    circle.style.top = clickTop - sizeCircle + 'px';
-    circle.style.left = clickLeft + 'px';
-
-    addDataCircle(
-      `#${circle.getAttribute('id')}`,
-      clickTop - sizeCircle,
-      clickLeft
-    );
-  } else {
-    circle.style.top = clickTop + 'px';
-    circle.style.left = clickLeft - sizeCircle + 'px';
-
-    addDataCircle(
-      `#${circle.getAttribute('id')}`,
-      clickTop,
-      clickLeft - sizeCircle
-    );
+    return errorFunc();
   }
 
-  // if (additionalInformationAboutCircle) {
-  //   circle.textContent = `${clickTop}`;
-  // }
-  console.log(clickTop, clickLeft);
-}
+  if (checkCoord(clickTop, clickLeft)) {
+    const circle = createCircle();
 
-function addDataCircle(id, top, left) {
-  dataCircle.push({
-    id: id,
-    top: top,
-    left: left,
-  });
+    dataCircle.push({
+      id: `#${circle.getAttribute('id')}`,
+      top: clickTop - sizeCircle / 2,
+      left: clickLeft - sizeCircle / 2,
+    });
+    circle.style.top = `${clickTop - sizeCircle / 2}px`;
+    circle.style.left = `${clickLeft - sizeCircle / 2}px`;
+
+    if (additionalInformationAboutCircle) {
+      // circle.textContent = `${clickTop}`;
+    }
+  } else {
+    return errorFunc();
+  }
 }
 
 function deleteCircle(e) {
@@ -176,6 +178,8 @@ function deleteCircle(e) {
 }
 
 function mouseDown(e) {
+  // console.log('mouseDown', e);
+
   clickTop = e.y - e.target.getBoundingClientRect().top;
   clickLeft = e.x - e.target.getBoundingClientRect().left;
 
@@ -185,9 +189,12 @@ function mouseDown(e) {
 }
 
 function mouseMove(e) {
-  let top = Math.floor(e.y - playingField.getBoundingClientRect().top);
-  let left = Math.floor(e.x - playingField.getBoundingClientRect().left);
+  // console.log('mouseMove', e);
+
+  const top = Math.floor(e.y - playingField.getBoundingClientRect().top);
+  const left = Math.floor(e.x - playingField.getBoundingClientRect().left);
   const elem = e.target;
+
   if (
     top < playingField.offsetHeight - elem.offsetHeight + clickTop &&
     top - clickTop >= 0 &&
@@ -196,38 +203,70 @@ function mouseMove(e) {
   ) {
     elem.style.top = `${top - clickTop}px`;
     elem.style.left = `${left - clickLeft}px`;
+
+    if (additionalInformationAboutCircle) {
+      elem.textContent = `${top - clickTop}`;
+    }
   }
-  if (additionalInformationAboutCircle) {
-    elem.textContent = `${top - clickTop}`;
-  }
+
+  elem.addEventListener('mouseup', () => {
+    elem.style.top = top;
+    elem.style.left = left;
+
+    dataCircle = dataCircle.map((item) => {
+      if (item.id === `#${elem.getAttribute('id')}`) {
+        return {
+          ...item,
+          top,
+          left,
+        };
+      }
+
+      return item;
+    });
+
+    playingField.removeEventListener('mousemove', mouseMove);
+  });
+}
+
+function errorFunc() {
+  playingField.style['border-color'] = 'red';
+
+  setTimeout(() => {
+    playingField.style['border-color'] = '#000';
+  }, 300);
 }
 
 generateMugs();
 
 playingField.addEventListener('mousedown', mouseDown);
 
-playingField.addEventListener('mouseup', (e) => {
-  if (e.target.getAttribute('id') !== 'playing-field') {
-    dataCircle = dataCircle.map((item) => {
-      if (item.id === '#' + e.target.getAttribute('id')) {
-        return {
-          ...item,
-          top:
-            e.target.getBoundingClientRect().top -
-            playingField.getBoundingClientRect().top -
-            1,
-          left:
-            e.target.getBoundingClientRect().left -
-            playingField.getBoundingClientRect().left -
-            1,
-        };
-      }
-      return item;
-    });
-  }
+// !!! метод EventListener вызван не в том месте, из-за этого потребовалась лишняя проверка и вычисления
+// !!! перенёс этот метод во внутрь mousemove
+// playingField.addEventListener('mouseup', (e) => {
+//   console.log('playingField-mouseup', e);
 
-  playingField.removeEventListener('mousemove', mouseMove);
-});
+//   if (e.target.getAttribute('id') !== 'playing-field') {
+//     dataCircle = dataCircle.map((item) => {
+//       if (item.id === '#' + e.target.getAttribute('id')) {
+//         return {
+//           ...item,
+//           top:
+//             e.target.getBoundingClientRect().top -
+//             playingField.getBoundingClientRect().top -
+//             1,
+//           left:
+//             e.target.getBoundingClientRect().left -
+//             playingField.getBoundingClientRect().left -
+//             1,
+//         };
+//       }
+//       return item;
+//     });
+//   }
+
+//   playingField.removeEventListener('mousemove', mouseMove);
+// });
 
 playingField.addEventListener('dblclick', (e) => {
   if (e.target.getAttribute('id') === 'playing-field') {
