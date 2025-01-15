@@ -17,13 +17,13 @@ function generateMugs() {
     const circle = createCircle();
     const position = generatePosition();
 
-    dataCircle.push({ id: `#${circle.getAttribute('id')}`, ...position });
+    addDataCircle(`#${circle.getAttribute('id')}`, position.top, position.left);
 
     circle.style.top = `${position.top - clickTop}px`;
     circle.style.left = `${position.left - clickLeft}px`;
 
     if (additionalInformationAboutCircle) {
-      circle.textContent = `${i + 1}`;
+      circle.textContent = `${position.top}`;
     }
   }
 }
@@ -121,7 +121,7 @@ function checkCoord(top, left) {
 function createCircle() {
   const hex = generateHex(dataHex);
 
-  playingField.innerHTML += `<div class='circle' id = 'id-${hex}'></div>`;
+  playingField.innerHTML += `<div class='circle' id ='id-${hex}'></div>`;
 
   const circle = document.querySelector(`#id-${hex}`);
 
@@ -196,9 +196,9 @@ function mouseMove(e) {
   const elem = e.target;
 
   if (
-    top < playingField.clientHeight - elem.clientHeight + clickTop &&
+    top < playingField.offsetHeight - elem.offsetHeight + clickTop &&
     top - clickTop >= 0 &&
-    left < playingField.clientWidth - elem.clientWidth + clickLeft &&
+    left < playingField.offsetWidth - elem.offsetWidth + clickLeft &&
     left - clickLeft >= 0
   ) {
     elem.style.top = `${top - clickTop}px`;
