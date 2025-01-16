@@ -1,81 +1,12 @@
 'use strict';
-
-const dataPokemon = {
-  bulbasaur: {
-    img: '',
-    id: '#0001',
-    name: 'Bulbasaur',
-    setOfForces: ['Grass', 'Poison'],
-  },
-  ivysaur: {
-    img: '',
-    id: '#0002',
-    name: 'Ivysaur',
-    setOfForces: ['Grass', 'Poison'],
-  },
-  charmander: {
-    img: '',
-    id: '#0003',
-    name: 'Charmander',
-    setOfForces: ['Fire'],
-  },
-  squirtle: {
-    img: '',
-    id: '#0004',
-    name: 'Squirtle',
-    setOfForces: ['Water'],
-  },
-  pidgey: {
-    img: '',
-    id: '#0005',
-    name: 'Pidgey',
-    setOfForces: ['Flying', 'Fire'],
-  },
-  flareon: {
-    img: '',
-    id: '#0006',
-    name: 'Flareon',
-    setOfForces: ['Fire'],
-  },
-  vaporeon: {
-    img: '',
-    id: '#0007',
-    name: 'Vaporeon',
-    setOfForces: ['Water'],
-  },
-  articuno: {
-    img: '',
-    id: '#0008',
-    name: 'Articuno',
-    setOfForces: ['Fire', 'Flying'],
-  },
-  zapdos: {
-    img: '',
-    id: '#0009',
-    name: 'Zapdos',
-    setOfForces: ['Fire', 'Flying'],
-  },
-  moltres: {
-    img: '',
-    id: '#0010',
-    name: 'Moltres',
-    setOfForces: ['Fire', 'Flying'],
-  },
-  leafeon: {
-    img: '',
-    id: '#0011',
-    name: 'Leafeon',
-    setOfForces: ['Grass'],
-  },
-  gyarados: {
-    img: '',
-    id: '#0012',
-    name: 'Gyarados',
-    setOfForces: ['Water', 'Flying'],
-  },
-};
+const POKEMON_API = 'https://pokeapi.co/api/v2';
+const POKEMON_LIMIT = 12;
+let countPokemon = 12;
+let countCard = 0;
+const START_ID = '#0000';
 
 const cardCatalog = document.querySelector('.card-catalog');
+const cardCatalogButton = document.querySelector('.card-catalog__button');
 
 function generatePokemonCard(pokemon) {
   const { img, id, name, setOfForces } = pokemon;
@@ -107,10 +38,47 @@ function generatePokemonCard(pokemon) {
   );
 }
 
-function addAllPokemonCards() {
-  for (let key in dataPokemon) {
-    generatePokemonCard(dataPokemon[key]);
-  }
+async function addAllPokemonCards() {
+  let dataPokemon = await getPokemons();
+  console.log(dataPokemon);
+  dataPokemon.forEach((pokemon) => generatePokemonCard(pokemon));
 }
 
 addAllPokemonCards();
+
+async function getPokemons() {
+  try {
+    const arr = [];
+    for (countCard; countCard < countPokemon; countCard++) {
+      const data = await fetch(`${POKEMON_API}/pokemon/${[countCard + 1]}`);
+      const pokemon = await data.json();
+      const obj = {
+        img: `https://www.pokemon.com/static-assets/content-assets/cms2/img/pokedex/detail/${
+          '000'.slice(String(pokemon.id).length) + pokemon.id
+        }.png`,
+        id:
+          START_ID.slice(-START_ID.length, -String(pokemon.id).length) +
+          pokemon.id,
+        name: pokemon.name.replace(
+          pokemon.name[0],
+          pokemon.name[0].toUpperCase()
+        ),
+        setOfForces: pokemon.types.map((power) =>
+          power.type.name.replace(
+            power.type.name[0],
+            power.type.name[0].toUpperCase()
+          )
+        ),
+      };
+      arr.push(obj);
+    }
+    return arr;
+  } catch (e) {
+    console.log(e);
+  }
+}
+
+cardCatalogButton.addEventListener('click', async () => {
+  countPokemon += POKEMON_LIMIT;
+  addAllPokemonCards();
+});

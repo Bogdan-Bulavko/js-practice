@@ -51,13 +51,36 @@ body {
   background: url(./image/container_bg.png);
 }
 
+.card-catalog__button {
+  height: 45px;
+}
+
 .card-catalog {
-  padding: 15px;
+  padding: 15px 15px 0 15px;
   margin: auto;
   width: 1024px;
   display: flex;
   flex-wrap: wrap;
   background: white;
+}
+
+.container__wrapper-for-button {
+  display: flex;
+  align-items: center;
+  background: white;
+  margin: 0 auto;
+  max-width: 1024px;
+  height: 75px;
+}
+
+.card-catalog__button {
+  display: block;
+  margin: 0 auto;
+  padding: 0 15px;
+  background-color: #30a7d7;
+  color: white;
+  border-radius: 5px;
+  border: 0px;
 }
 
 .pokemon-card {
@@ -76,6 +99,7 @@ body {
 .imgPC {
   width: 100%;
   height: 100%;
+  background: #f2f2f2;
 }
 
 .pokemon-card__info {
@@ -128,4 +152,9 @@ body {
 .type-of-force--Water {
   color: white;
   background: #084aff;
+}
+
+.type-of-force--Bug {
+  color: white;
+  background: #729f3f;
 }
