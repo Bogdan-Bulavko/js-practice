@@ -1,79 +1,79 @@
 'use strict';
 
-const dataPokemon = {
-  bulbasaur: {
+const dataPokemon = [
+  {
     img: '',
     id: '#0001',
     name: 'Bulbasaur',
     setOfForces: ['Grass', 'Poison'],
   },
-  ivysaur: {
+  {
     img: '',
     id: '#0002',
     name: 'Ivysaur',
     setOfForces: ['Grass', 'Poison'],
   },
-  charmander: {
+  {
     img: '',
     id: '#0003',
     name: 'Charmander',
     setOfForces: ['Fire'],
   },
-  squirtle: {
+  {
     img: '',
     id: '#0004',
     name: 'Squirtle',
     setOfForces: ['Water'],
   },
-  pidgey: {
+  {
     img: '',
     id: '#0005',
     name: 'Pidgey',
     setOfForces: ['Flying', 'Fire'],
   },
-  flareon: {
+  {
     img: '',
     id: '#0006',
     name: 'Flareon',
     setOfForces: ['Fire'],
   },
-  vaporeon: {
+  {
     img: '',
     id: '#0007',
     name: 'Vaporeon',
     setOfForces: ['Water'],
   },
-  articuno: {
+  {
     img: '',
     id: '#0008',
     name: 'Articuno',
     setOfForces: ['Fire', 'Flying'],
   },
-  zapdos: {
+  {
     img: '',
     id: '#0009',
     name: 'Zapdos',
     setOfForces: ['Fire', 'Flying'],
   },
-  moltres: {
+  {
     img: '',
     id: '#0010',
     name: 'Moltres',
     setOfForces: ['Fire', 'Flying'],
   },
-  leafeon: {
+  {
     img: '',
     id: '#0011',
     name: 'Leafeon',
     setOfForces: ['Grass'],
   },
-  gyarados: {
+  {
     img: '',
     id: '#0012',
     name: 'Gyarados',
     setOfForces: ['Water', 'Flying'],
   },
-};
+];
 
 const cardCatalog = document.querySelector('.card-catalog');
 
@@ -108,9 +108,7 @@ function generatePokemonCard(pokemon) {
 }
 
 function addAllPokemonCards() {
-  for (let key in dataPokemon) {
-    generatePokemonCard(dataPokemon[key]);
-  }
+  dataPokemon.forEach((pokemon) => generatePokemonCard(pokemon));
 }
 
 addAllPokemonCards();
