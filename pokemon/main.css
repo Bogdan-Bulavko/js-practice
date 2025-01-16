@@ -158,3 +158,18 @@ body {
   color: white;
   background: #729f3f;
 }
+
+.type-of-force--Normal {
+  color: black;
+  background: #a4acaf;
+}
+
+.type-of-force--Electric {
+  color: black;
+  background: #eed535;
+}
+
+.type-of-force--Ground {
+  color: black;
+  background: #f7de3f;
+}

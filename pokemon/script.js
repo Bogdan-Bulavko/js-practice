@@ -40,7 +40,6 @@ function generatePokemonCard(pokemon) {
 
 async function addAllPokemonCards() {
   let dataPokemon = await getPokemons();
-  console.log(dataPokemon);
   dataPokemon.forEach((pokemon) => generatePokemonCard(pokemon));
 }
 
