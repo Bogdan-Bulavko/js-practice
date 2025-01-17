@@ -1,8 +1,9 @@
 'use strict';
 const POKEMON_API = 'https://pokeapi.co/api/v2';
 const POKEMON_LIMIT = 12;
-let countPokemon = 12;
-let countCard = 0;
+let pokemonOffset = 0;
+// let countPokemon = 12;
+// let countCard = 0;
 const START_ID = '#0000';
 
 const cardCatalog = document.querySelector('.card-catalog');
@@ -39,22 +40,36 @@ function generatePokemonCard(pokemon) {
 }
 
 async function addAllPokemonCards() {
-  let dataPokemon = await getPokemons();
-  dataPokemon.forEach((pokemon) => generatePokemonCard(pokemon));
+  let dataPokemons = await getPokemons();
+  dataPokemons.forEach((pokemon) => generatePokemonCard(pokemon));
 }
 
 addAllPokemonCards();
 
+const fetchPokemonData = async (url) => {
+  const response = await fetch(url);
+  return await response.json();
+};
+
 async function getPokemons() {
+  let arr = [];
   try {
-    const arr = [];
-    for (countCard; countCard < countPokemon; countCard++) {
-      const data = await fetch(`${POKEMON_API}/pokemon/${[countCard + 1]}`);
-      const pokemon = await data.json();
+    let arrURL = [];
+    const data = await fetch(
+      `${POKEMON_API}/pokemon?limit=12&offset=${pokemonOffset}`
+    );
+    const pokemons = await data.json();
+    arrURL = pokemons.results.map((pokemon) => pokemon.url);
+
+    const pokemonsObjects = await Promise.all(
+      arrURL.map(async (url) => {
+        return await fetchPokemonData(url);
+      })
+    );
+
+    pokemonsObjects.forEach((pokemon) => {
       const obj = {
-        img: `https://www.pokemon.com/static-assets/content-assets/cms2/img/pokedex/detail/${
-          '000'.slice(String(pokemon.id).length) + pokemon.id
-        }.png`,
+        img: pokemon.sprites.front_default,
         id:
           START_ID.slice(-START_ID.length, -String(pokemon.id).length) +
           pokemon.id,
@@ -70,7 +85,9 @@ async function getPokemons() {
         ),
       };
       arr.push(obj);
-    }
+      pokemonOffset++;
+    });
+
     return arr;
   } catch (e) {
     console.log(e);
@@ -78,6 +95,5 @@ async function getPokemons() {
 }
 
 cardCatalogButton.addEventListener('click', async () => {
-  countPokemon += POKEMON_LIMIT;
   addAllPokemonCards();
 });
