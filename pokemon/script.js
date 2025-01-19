@@ -2,8 +2,6 @@
 const POKEMON_API = 'https://pokeapi.co/api/v2';
 const POKEMON_LIMIT = 12;
 let pokemonOffset = 0;
-// let countPokemon = 12;
-// let countCard = 0;
 const START_ID = '#0000';
 
 const cardCatalog = document.querySelector('.card-catalog');
@@ -54,12 +52,13 @@ const fetchPokemonData = async (url) => {
 async function getPokemons() {
   let arr = [];
   try {
-    let arrURL = [];
     const data = await fetch(
       `${POKEMON_API}/pokemon?limit=12&offset=${pokemonOffset}`
     );
+
     const pokemons = await data.json();
-    arrURL = pokemons.results.map((pokemon) => pokemon.url);
+
+    let arrURL = pokemons.results.map((pokemon) => pokemon.url);
 
     const pokemonsObjects = await Promise.all(
       arrURL.map(async (url) => {
