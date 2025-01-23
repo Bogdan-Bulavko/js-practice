@@ -98,8 +98,6 @@ const cardCatalogButton = document.querySelector('.card-catalog__button');
 const renderThePokemonType = function (pokemon, typeWrapper) {
   pokemon.setOfForces.forEach((power) => {
     const typeStyle = pokemonTypeDatabase.find((PT) => PT.typeName === power);
-
-    console.log(typeStyle);
     const type = document.createElement('div');
     type.classList.add('pokemon-card__type-of-force');
     type.textContent = power;
