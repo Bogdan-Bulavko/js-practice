@@ -1,8 +1,86 @@
 'use strict';
+<<<<<<< HEAD
 const POKEMON_API = 'https://pokeapi.co/api/v2';
 const POKEMON_LIMIT = 12;
 let pokemonOffset = 0;
 const START_ID = '#0000';
+=======
+
+const dataPokemon = [
+  {
+    img: '',
+    id: '#0001',
+    name: 'Bulbasaur',
+    setOfForces: ['Grass', 'Poison'],
+  },
+  {
+    img: '',
+    id: '#0002',
+    name: 'Ivysaur',
+    setOfForces: ['Grass', 'Poison'],
+  },
+  {
+    img: '',
+    id: '#0003',
+    name: 'Charmander',
+    setOfForces: ['Fire'],
+  },
+  {
+    img: '',
+    id: '#0004',
+    name: 'Squirtle',
+    setOfForces: ['Water'],
+  },
+  {
+    img: '',
+    id: '#0005',
+    name: 'Pidgey',
+    setOfForces: ['Flying', 'Fire'],
+  },
+  {
+    img: '',
+    id: '#0006',
+    name: 'Flareon',
+    setOfForces: ['Fire'],
+  },
+  {
+    img: '',
+    id: '#0007',
+    name: 'Vaporeon',
+    setOfForces: ['Water'],
+  },
+  {
+    img: '',
+    id: '#0008',
+    name: 'Articuno',
+    setOfForces: ['Fire', 'Flying'],
+  },
+  {
+    img: '',
+    id: '#0009',
+    name: 'Zapdos',
+    setOfForces: ['Fire', 'Flying'],
+  },
+  {
+    img: '',
+    id: '#0010',
+    name: 'Moltres',
+    setOfForces: ['Fire', 'Flying'],
+  },
+  {
+    img: '',
+    id: '#0011',
+    name: 'Leafeon',
+    setOfForces: ['Grass'],
+  },
+  {
+    img: '',
+    id: '#0012',
+    name: 'Gyarados',
+    setOfForces: ['Water', 'Flying'],
+  },
+];
+>>>>>>> dev
 
 const cardCatalog = document.querySelector('.card-catalog');
 const cardCatalogButton = document.querySelector('.card-catalog__button');
@@ -37,9 +115,14 @@ function generatePokemonCard(pokemon) {
   );
 }
 
+<<<<<<< HEAD
 async function addAllPokemonCards() {
   let dataPokemons = await getPokemons();
   dataPokemons.forEach((pokemon) => generatePokemonCard(pokemon));
+=======
+function addAllPokemonCards() {
+  dataPokemon.forEach((pokemon) => generatePokemonCard(pokemon));
+>>>>>>> dev
 }
 
 addAllPokemonCards();

@@ -58,7 +58,7 @@ body {
 .card-catalog {
   padding: 15px 15px 0 15px;
   margin: auto;
-  width: 1024px;
+  max-width: 1024px;
   display: flex;
   flex-wrap: wrap;
   background: white;
@@ -172,4 +172,10 @@ body {
 .type-of-force--Ground {
   color: black;
   background: #f7de3f;
+}
+/* Адаптирование */
+@media screen and (max-width: 500px) {
+  body {
+    padding: 50px 50px 0 50px;
+  }
 }
