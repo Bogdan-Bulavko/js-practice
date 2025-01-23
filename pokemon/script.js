@@ -39,6 +39,7 @@ function generatePokemonCard(pokemon) {
 
 async function addAllPokemonCards() {
   let dataPokemons = await getPokemons();
+  pokemonOffset += POKEMON_LIMIT;
   dataPokemons.forEach((pokemon) => generatePokemonCard(pokemon));
 }
 
@@ -84,7 +85,6 @@ async function getPokemons() {
         ),
       };
       arr.push(obj);
-      pokemonOffset++;
     });
 
     return arr;
