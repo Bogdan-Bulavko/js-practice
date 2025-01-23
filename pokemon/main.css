@@ -129,50 +129,6 @@ body {
   border-radius: 5px;
 }
 
-.type-of-force--Grass {
-  color: black;
-  background: #6bff08;
-}
-
-.type-of-force--Poison {
-  color: white;
-  background: #ce08ff;
-}
-
-.type-of-force--Fire {
-  color: white;
-  background: #ff9408;
-}
-
-.type-of-force--Flying {
-  color: black;
-  background: #08c5ff;
-}
-
-.type-of-force--Water {
-  color: white;
-  background: #084aff;
-}
-
-.type-of-force--Bug {
-  color: white;
-  background: #729f3f;
-}
-
-.type-of-force--Normal {
-  color: black;
-  background: #a4acaf;
-}
-
-.type-of-force--Electric {
-  color: black;
-  background: #eed535;
-}
-
-.type-of-force--Ground {
-  color: black;
-  background: #f7de3f;
-}
 /* Адаптирование */
 @media screen and (max-width: 500px) {
   body {
