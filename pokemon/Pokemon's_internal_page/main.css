@@ -1,0 +1,84 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 100%; /* Устанавливаем базовый размер шрифта */
+}
+
+body {
+  line-height: 1.5; /* Устанавливаем высоту строки для лучшей читаемости */
+  font-family: Arial, sans-serif; /* Устанавливаем шрифт по умолчанию */
+}
+
+/* Сброс стилей для заголовков */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: normal; /* Сбрасываем начальное значение жирности */
+}
+
+/* Сброс стилей для списков */
+ul,
+ol {
+  list-style: none; /* Убираем маркеры и номера */
+}
+
+/* Сброс стилей для ссылок */
+a {
+  text-decoration: none; /* Убираем подчеркивание */
+  color: inherit; /* Унаследуем цвет от родителя */
+}
+
+/* Сброс стилей для таблиц */
+table {
+  border-collapse: collapse; /* Убираем пробелы между ячейками */
+}
+
+/* Сброс стилей для изображений */
+img {
+  max-width: 100%; /* Ограничиваем ширину изображений */
+  height: auto; /* Сохраняем пропорции изображений */
+}
+
+body {
+  padding: 100px 80px 0 80px;
+  background: url(../image/container_bg.png);
+}
+
+.pokemon-page {
+  margin: 0 auto;
+  max-width: 1280px;
+}
+
+.pokemon-page__navigation {
+  margin: 0 auto;
+  max-width: 1280px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.pokemon-navigation__button {
+  width: 635px;
+  height: 120px;
+  display: block;
+  background-color: #a4a4a4;
+}
+
+.pokemon-navigation__button--wrapper {
+  padding: 16px 0 64px 0;
+  width: 448px;
+}
+
+.previuos {
+  float: right;
+}
+
+.next {
+  text-align: right;
+}
