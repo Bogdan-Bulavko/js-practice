@@ -78,7 +78,7 @@ body {
 
 .pokemon__name__page::after {
   position: absolute;
-  right: -75px;
+  right: -74px;
   bottom: 0;
   content: ' ';
   background: transparent url('../image/notch-white-xxl.png') no-repeat right
@@ -89,7 +89,7 @@ body {
 
 .pokemon__name__page::before {
   position: absolute;
-  left: -75px;
+  left: -74px;
   bottom: 0;
   content: ' ';
   background: transparent url('../image/notch-white-xxl.png') no-repeat 0 0;
@@ -314,7 +314,9 @@ body {
   width: 40%;
 }
 .pokemon-page__info__column2 {
-  width: 40%;
+  display: flex;
+  justify-content: space-around;
+  width: 60%;
 }
 
 .pokemon-page__info--name {
@@ -365,4 +367,91 @@ body {
   width: 140px;
   border-radius: 5px;
   background-color: red;
+}
+
+.pokemon-evolution__container {
+  padding: 50px 35px;
+  max-width: 1024px;
+  width: 100%;
+  margin: 0 auto;
+  background-color: white;
+}
+
+.pokemon-evolution__wrapper {
+  position: relative;
+  margin: 0 auto;
+  width: 100%;
+  background: url('../image/body_gray_bg.png');
+  border-radius: 5px;
+  padding: 20px;
+}
+
+.pokemon-evolution__wrapper::before {
+  content: ' ';
+  background: url(../image/default-dog-ear.png) no-repeat 0 0;
+  height: 2em;
+  position: absolute;
+  width: 2em;
+  z-index: 3;
+  left: -1px;
+  bottom: -1px;
+  -webkit-transform: rotate(-90deg);
+  -ms-transform: rotate(-90deg);
+  -moz-transform: rotate(-90deg);
+  -o-transform: rotate(-90deg);
+  transform: rotate(-90deg);
+  -webkit-backface-visibility: hidden;
+  -ms-backface-visibility: hidden;
+  -moz-backface-visibility: hidden;
+  -o-backface-visibility: hidden;
+  backface-visibility: hidden;
+}
+
+.pokemon-evolution__list {
+  display: flex;
+  justify-content: space-around;
+}
+
+.pokemon-evolution__list__item {
+  text-align: center;
+  width: 20%;
+}
+
+.pokemon-evolution__tittle {
+  font-weight: 500;
+  color: #fff;
+}
+
+.pokemon-evolution__image {
+  box-shadow: 0 4px 4px 0px #212121;
+  background-color: #616161;
+  border: 5px solid #fff;
+  border-radius: 50%;
+  max-width: 150px;
+  width: 100%;
+}
+
+.pokemon-evolution__name {
+  margin: 0.75em 0;
+  color: #fff;
+  width: 100%;
+}
+
+.pokemon__evolution__id {
+  color: #a4acaf;
+}
+
+.pokemon-evolution__set-of-forces {
+  display: flex;
+  justify-content: space-evenly;
+}
+
+.pokemon-evolution__type-of-force {
+  background: red;
+  margin-right: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 70px;
+  border-radius: 5px;
 }
