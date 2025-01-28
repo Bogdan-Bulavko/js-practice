@@ -52,10 +52,49 @@ body {
 }
 
 .pokemon-page__navigation {
+  position: relative;
   margin: 0 auto;
   max-width: 1280px;
   display: flex;
   justify-content: space-between;
+}
+
+.pokemon__name__page {
+  position: absolute;
+  bottom: 0;
+  left: 50%; /* Сдвигаем вправо на 50% от ширины родителя */
+  transform: translate(-50%);
+  color: #212121;
+  font-size: 34px;
+  text-align: center;
+  max-width: 1024px;
+  width: 60%;
+  background-color: white;
+}
+
+.pokemon__name__page div {
+  display: inline-block;
+}
+
+.pokemon__name__page::after {
+  position: absolute;
+  right: -75px;
+  bottom: 0;
+  content: ' ';
+  background: transparent url('../image/notch-white-xxl.png') no-repeat right
+    top;
+  height: 52px;
+  width: 75px;
+}
+
+.pokemon__name__page::before {
+  position: absolute;
+  left: -75px;
+  bottom: 0;
+  content: ' ';
+  background: transparent url('../image/notch-white-xxl.png') no-repeat 0 0;
+  height: 52px;
+  width: 75px;
 }
 
 .pokemon-navigation__button {
@@ -63,10 +102,16 @@ body {
   height: 120px;
   display: block;
   background-color: #a4a4a4;
+  transition: 0.3s;
+}
+
+.pokemon-navigation__button:hover {
+  transition: 0.3s;
+  background-color: #30a7d7;
 }
 
 .pokemon-navigation__button--wrapper {
-  padding: 16px 0 64px 0;
+  height: 55%;
   display: flex;
   align-items: center;
   width: 448px;
@@ -85,9 +130,18 @@ body {
   margin: 0 1.5em 0;
   width: 26px;
   height: 26px;
+  font-size: 18px;
   border-radius: 50%;
   background-color: white;
   text-align: center;
+}
+
+.icon-previuos::before {
+  content: '<';
+}
+
+.icon-next::before {
+  content: '>';
 }
 
 .pokemon__id {
@@ -109,17 +163,6 @@ body {
   width: 100%;
 }
 
-.pokemon__name__page {
-  color: #212121;
-  font-size: 225%;
-  margin: 0 auto;
-  padding-bottom: 50px;
-  text-align: center;
-  max-width: 1024px;
-  width: 100%;
-  background-color: white;
-}
-
 #pokemon__id__page {
   color: #616161;
   margin-left: 0.125em;
@@ -127,6 +170,7 @@ body {
 }
 
 .pokemon-page__container {
+  padding-top: 50px;
   max-width: 1024px;
   width: 100%;
   margin: 0 auto;
