@@ -10,15 +10,65 @@
     <nav class="pokemon-page__navigation">
       <a href="#" class="pokemon-navigation__button">
         <div class="pokemon-navigation__button--wrapper previuos">
-          <span class="icon-previuos">-</span><span>#0001</span><span>Name</span>
+          <span class="icon-arrow icon-previuos">-</span
+          ><span class="pokemon__id">#0001</span
+          ><span class="pokemon__name">Name</span>
         </div>
       </a>
       <a href="#" class="pokemon-navigation__button">
         <div class="pokemon-navigation__button--wrapper next">
-          <span>Name</span><span>#0001</span class=""><span class="icon-next">+</span>
+          <span class="pokemon__name">Name</span
+          ><span class="pokemon__id">#0001</span
+          ><span class="icon-arrow icon-next">+</span>
         </div>
       </a>
     </nav>
-    <article class="pokemon-page"></article>
+    <article class="pokemon-page">
+      <div class="pokemon__name__page">
+        Pokemon <span id="pokemon__id__page">#0001</span>
+      </div>
+      <section class="pokemon-page__container">
+        <div class="pokemon-page__container__column-1">
+          <div class="pokemon-page__img__wrapper">
+            <img
+              class="pokemon-page__img"
+              src="../image/not-images.png"
+              alt="pokemon image"
+            />
+          </div>
+          <div class="pokemon-page__stats-info"></div>
+        </div>
+        <div class="pokemon-page__container__column-2">
+          <p class="pokemon-page__description">
+            The more sunlight Ivysaur bathes in, the more strength wells up
+            within it, allowing the bud on its back to grow larger.
+          </p>
+          <div class="pokemon-page__version">
+            <h3>Versions:</h3>
+            <span class="circle-wrapper__icon-pokeball--blue"
+              ><span class="icon-pokeball blue"></span>
+            </span>
+            <span class="circle-wrapper__icon-pokeball--red">
+              <span class="icon-pokeball red"></span>
+            </span>
+          </div>
+          <div class="pokemon-page__info"></div>
+
+          <h3 class="pokemon-page__tittle-type">Type</h3>
+          <ul class="pokemon__set-of-forces">
+            <li class="pokemon__type-of-force">Grass</li>
+            <li class="pokemon__type-of-force">Poison</li>
+          </ul>
+
+          <h3 class="pokemon-page__tittle-type">Weaknesses</h3>
+          <ul class="pokemon__set-of-forces">
+            <li class="pokemon__type-of-force">Grass</li>
+            <li class="pokemon__type-of-force">Poison</li>
+            <li class="pokemon__type-of-force">Grass</li>
+            <li class="pokemon__type-of-force">Poison</li>
+          </ul>
+        </div>
+      </section>
+    </article>
   </body>
 </html>
