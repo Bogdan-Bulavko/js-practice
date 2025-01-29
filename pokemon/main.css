@@ -94,6 +94,7 @@ body {
   margin-bottom: 5px;
   height: 230px;
   border-radius: 10px;
+  cursor: pointer;
 }
 
 .imgPC {

@@ -92,8 +92,13 @@ const pokemonTypeDatabase = {
   },
 };
 
+let innerPokemonData = null;
+let allPokemonsData = [];
+
+const appContainer = document.getElementById('app');
 const cardCatalog = document.querySelector('.card-catalog');
 const cardCatalogButton = document.querySelector('.card-catalog__button');
+const allPokemonContainer = document.getElementById('container');
 
 const renderThePokemonType = function (pokemon, typeWrapper) {
   pokemon.setOfForces.forEach((power) => {
@@ -107,6 +112,30 @@ const renderThePokemonType = function (pokemon, typeWrapper) {
   });
 };
 
+const GetPokemonIdFromUrl = (url) => {
+  const index = url.match('=').index
+
+  return Number(url.slice(index + 1));
+}
+
+const formatedId = (id) => {
+  const match = id.match(/^#(\d+)$/);
+
+  return parseInt(match[1], 10); 
+}
+
+// обработчик нажатий на ссылки
+const linksHandler = event =>  {
+  // запрещаем дальнейший переход по ссылке
+  event.preventDefault();
+
+  // получаем запрошенный url
+  let url = new URL(event.currentTarget.href);
+  
+  // запускаем роутер, предавая ему path
+  Router.dispatch(url.pathname);
+}
+
 const generatePokemonCard = function (pokemon) {
   const { img, id, name } = pokemon;
 
@@ -114,9 +143,11 @@ const generatePokemonCard = function (pokemon) {
     'beforeend',
     `     <div class="pokemon-card">
             <div class="pokemon-card__image">
-              <img class="imgPC "src="${
-                img === '' ? './image/not-images.png' : img
-              }" alt="image pokemon">
+              <a href="/pokemons/${formatedId(id)}" id="pokemonLink-${formatedId(id)}">
+                <img class="imgPC "src="${
+                  img === '' ? './image/not-images.png' : img
+                }" alt="image pokemon">
+              </a>
             </div>
             <div class="pokemon-card__info">
               <p class="pokemon-card__id">${id}</p>
@@ -128,7 +159,47 @@ const generatePokemonCard = function (pokemon) {
           </div>`
   );
   renderThePokemonType(pokemon, document.getElementById(id));
+
+  const pokemonLink = document.getElementById(`pokemonLink-${formatedId(id)}`);
+  pokemonLink.addEventListener('click', (event) => linksHandler(event));
 };
+
+const RenderPokemonPage = async ({ id }) => {
+  console.log('RenderPokemonPage', id);
+
+  // если хэша нет - добавляем его в историю
+  if (!window.location.href.match('#')) {
+    history.pushState({}, null, window.location.href + `#pokemonId=${id}`);
+  }
+
+  if (allPokemonsData.length) {
+    innerPokemonData = allPokemonsData.find(item => formatedId(item.id) === id)
+  }
+  
+  if (!innerPokemonData) {
+    innerPokemonData = await fetchPokemonData(`${POKEMON_API}/pokemon/${id}`);
+  }
+  
+  console.log('innerPokemonData', innerPokemonData);
+  let newElement = document.createElement('div');
+  newElement.id = 'inner-pokemon-container';
+
+  let pokemonImage = document.createElement('img');
+  pokemonImage.src = innerPokemonData.img || innerPokemonData.sprites.front_default;
+
+  let pokemonName = document.createElement('h4');
+  pokemonName.innerText = innerPokemonData.name;
+
+  let pokemonId = document.createElement('p');
+  pokemonId.innerText = innerPokemonData.id;
+
+  newElement.append(pokemonImage, pokemonName, pokemonId);
+
+  let theFirstChild = appContainer.firstElementChild;
+  theFirstChild.style.display = 'none';
+
+  appContainer.insertBefore(newElement, theFirstChild);
+}
 
 const addAllPokemonCards = async function () {
   let dataPokemons = await getPokemons();
@@ -176,6 +247,7 @@ const getPokemons = async function () {
         ),
       };
       arr.push(obj);
+      allPokemonsData.push(obj);
     });
 
     return arr;
@@ -184,8 +256,23 @@ const getPokemons = async function () {
   }
 };
 
+const ShowMainPage = () => {
+  console.log('ShowMainPage');
+  let innerPokemonContainer = document.getElementById('inner-pokemon-container');
+  innerPokemonContainer.remove();
+  innerPokemonData = null;
+
+  allPokemonContainer.style.display = 'flex';
+}
+
 cardCatalogButton.addEventListener('click', async () => {
   addAllPokemonCards();
 });
 
-addAllPokemonCards();
+if (window.location.href.match('#')) {
+  const pokemonId = GetPokemonIdFromUrl(window.location.href);
+
+  RenderPokemonPage({ id: pokemonId });
+} else {
+  addAllPokemonCards();
+}
