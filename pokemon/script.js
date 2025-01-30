@@ -3,6 +3,7 @@ const POKEMON_API = 'https://pokeapi.co/api/v2';
 const POKEMON_LIMIT = 12;
 let pokemonOffset = 0;
 const START_ID = '#0000';
+const quantityCellGraphPokemonPage = 15;
 const pokemonTypeDatabase = {
   Bug: { typeName: 'Bug', backgroundColor: '#729f3f', textColor: '#fff' },
   Dragon: {
@@ -94,6 +95,7 @@ const pokemonTypeDatabase = {
 
 const cardCatalog = document.querySelector('.card-catalog');
 const cardCatalogButton = document.querySelector('.card-catalog__button');
+const container = document.querySelector('.container');
 
 const renderThePokemonType = function (pokemon, typeWrapper) {
   pokemon.setOfForces.forEach((power) => {
@@ -131,7 +133,6 @@ const generatePokemonCard = function (pokemon) {
 };
 
 const addAllPokemonCards = async function () {
-  let dataPokemons = await getPokemons();
   pokemonOffset += POKEMON_LIMIT;
   dataPokemons.forEach((pokemon) => generatePokemonCard(pokemon));
 };
@@ -188,4 +189,186 @@ cardCatalogButton.addEventListener('click', async () => {
   addAllPokemonCards();
 });
 
+let dataPokemons = getPokemons().then((data) => data);
+
 addAllPokemonCards();
+
+const createGrapOnStatsPokemonPage = function (nameGraph, quantityCell, num) {
+  let arrDivisionElements = [];
+
+  for (let i = 0; i < quantityCell; i++) {
+    let division = '<li class="division"></li>';
+    if (quantityCell - i <= num)
+      division = '<li class="division division-active"></li>';
+    arrDivisionElements.push(division);
+  }
+
+  const graph = `                
+              <li class="pokemon-page__graph ${nameGraph}">
+                <ul class="pokemon-page__graph__division_list">
+                   ${arrDivisionElements.join(' ')}
+                </ul>
+                <p class="graph-name">${nameGraph}</p>
+              </li>`;
+
+  return graph;
+};
+
+const createPokemonPageInfo = function (nameInfo, text) {
+  return `  
+            <li class="pokemon-page__info__list__item">
+              <span class="pokemon-page__info--name">${nameInfo}</span>
+              <span class="pokemon-page__info--value">${text}</span>
+            </li>`;
+};
+
+const renderPokemonPage = function (pokemon) {
+  const pokedexPokemonDetails = document.createElement('section');
+  pokedexPokemonDetails.classList.add('pokedex-pokemon-details');
+
+  const pokemonPageNavigation = document.createElement('nav');
+  pokemonPageNavigation.classList.add('pokemon-page__navigation');
+  pokemonPageNavigation.insertAdjacentHTML(
+    'afterbegin',
+    `   <a href="#" class="pokemon-navigation__button">
+          <div class="pokemon-navigation__button--wrapper previuos">
+            <span class="icon-arrow icon-previuos"></span
+            ><span class="pokemon__id">#0001</span
+            ><span class="pokemon__name">Bulbasaur</span>
+          </div>
+        </a>
+        <a href="#" class="pokemon-navigation__button">
+          <div class="pokemon-navigation__button--wrapper next">
+            <span class="pokemon__name">Venusaur</span
+            ><span class="pokemon__id">#0003</span
+            ><span class="icon-arrow icon-next"></span>
+          </div>
+        </a>
+        <div class="pokemon__name__page">
+          <div>Ivysaur<span id="pokemon__id__page">#0002</span></div>
+        </div>
+      </nav>
+        `
+  );
+
+  const pokemonPage = document.createElement('article');
+  pokemonPage.classList.add('pokemon-page');
+
+  const pokemonPageContainer = document.createElement('div');
+  pokemonPageContainer.classList.add('pokemon-page__container');
+
+  const pokemonPageContainerColumn1 = document.createElement('div');
+  pokemonPageContainerColumn1.classList.add(
+    'pokemon-page__container__column-1'
+  );
+
+  pokemonPageContainerColumn1.insertAdjacentHTML(
+    'afterbegin',
+    `
+      <div class="pokemon-page__img__wrapper">
+        <img
+          class="pokemon-page__img"
+          src="./image/not-images.png"
+          alt="pokemon image"
+        />
+      </div>
+      <div class="pokemon-page__stats-info">
+        <h3 class="pokemon-page__stats-info__tittle">Stats</h3>
+        <ul class="pokemon-page__stats-table">
+        ${createGrapOnStatsPokemonPage('HP', quantityCellGraphPokemonPage, 3)}
+        ${createGrapOnStatsPokemonPage(
+          'Attack',
+          quantityCellGraphPokemonPage,
+          4
+        )}
+        ${createGrapOnStatsPokemonPage(
+          'Defense',
+          quantityCellGraphPokemonPage,
+          5
+        )}
+        ${createGrapOnStatsPokemonPage(
+          'Special-Attack',
+          quantityCellGraphPokemonPage,
+          1
+        )}
+        ${createGrapOnStatsPokemonPage(
+          'Special-Defense',
+          quantityCellGraphPokemonPage,
+          4
+        )}
+        ${createGrapOnStatsPokemonPage(
+          'Special-Defense',
+          quantityCellGraphPokemonPage,
+          7
+        )}
+        </ul>
+    `
+  );
+
+  const pokemonPageContainerColumn2 = document.createElement('div');
+  pokemonPageContainerColumn2.classList.add(
+    'pokemon-page__container__column-2'
+  );
+
+  pokemonPageContainerColumn2.insertAdjacentHTML(
+    'afterbegin',
+    `
+      <p class="pokemon-page__description">
+        The more sunlight Ivysaur bathes in, the more strength wells up
+        within it, allowing the bud on its back to grow larger.
+      </p>
+      <div class="pokemon-page__version">
+        <h3>Versions:</h3>
+        <span class="circle-wrapper__icon-pokeball--blue">
+          <span class="icon-pokeball blue"></span>
+        </span>
+        <span
+          class="circle-wrapper__icon-pokeball--red circle-wrapper__not-active">
+          <span class="icon-pokeball red"></span>
+        </span>
+      </div>
+      <div class="pokemon-page__info">
+        <div class="pokemon-page__info__column1">
+          <ul class="pokemon-page__info__list">
+            ${createPokemonPageInfo('Height', 'text')}
+            ${createPokemonPageInfo('Weight', 'text')}
+            ${createPokemonPageInfo('Gender', 'text')}
+          </ul>
+        </div>
+        <div class="pokemon-page__info__column2">
+          <ul class="pokemon-page__info__list">
+            ${createPokemonPageInfo('Category', 'text')}
+            ${createPokemonPageInfo('Abilities', 'text')}
+          </ul>
+        </div>
+      </div>
+
+      <h3 class="pokemon-page__tittle-type">Type</h3>
+      <ul class="pokemon__set-of-forces" id="${id}">
+        <li class="pokemon__type-of-force">Grass</li>
+        <li class="pokemon__type-of-force">Poison</li>
+      </ul>
+
+      <h3 class="pokemon-page__tittle-type">Weaknesses</h3>
+      <ul class="pokemon__set-of-forces">
+        <li class="pokemon__type-of-force">Grass</li>
+        <li class="pokemon__type-of-force">Poison</li>
+        <li class="pokemon__type-of-force">Grass</li>
+        <li class="pokemon__type-of-force">Poison</li>
+      </ul>
+    `
+  );
+
+  renderThePokemonType(pokemon, document.getElementById(id));
+
+  pokemonPageContainer.append(
+    pokemonPageContainerColumn1,
+    pokemonPageContainerColumn2
+  );
+  pokemonPage.append(pokemonPageContainer);
+
+  pokedexPokemonDetails.append(pokemonPageNavigation, pokemonPage);
+  container.append(pokedexPokemonDetails);
+};
+
+renderPokemonPage();
