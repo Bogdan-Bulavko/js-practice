@@ -307,20 +307,28 @@ const renderPokemonPage = async function (pokemon) {
 
   const pokemonPageNavigation = document.createElement('nav');
   pokemonPageNavigation.classList.add('pokemon-page__navigation');
-  console.log();
+
+  const nextPokemon =
+    id === dataPokemons.length ? dataPokemons[id - 1] : dataPokemons[id];
+  const previuosPokemon =
+    id === 1 ? dataPokemons[id - 1] : dataPokemons[id - 2];
+
+  console.log(dataPokemons.length, id);
   pokemonPageNavigation.insertAdjacentHTML(
     'afterbegin',
-    `   <a href="#" class="pokemon-navigation__button">
+    `   <a href="#" class="pokemon-navigation__button" id="pokemon-navigation__previuos">
           <div class="pokemon-navigation__button--wrapper previuos">
             <span class="icon-arrow icon-previuos"></span
-            ><span class="pokemon__id">#0001</span
-            ><span class="pokemon__name">Bulbasaur</span>
+            ><span class="pokemon__id">${formId(previuosPokemon.id)}</span
+            ><span class="pokemon__name">${formName(
+              previuosPokemon.name
+            )}</span>
           </div>
         </a>
-        <a href="#" class="pokemon-navigation__button">
+        <a href="#" class="pokemon-navigation__button" id="pokemon-navigation__next">
           <div class="pokemon-navigation__button--wrapper next">
-            <span class="pokemon__name">Venusaur</span
-            ><span class="pokemon__id">#0003</span
+            <span class="pokemon__name">${formName(nextPokemon.name)}</span
+            ><span class="pokemon__id">${formId(nextPokemon.id)}</span
             ><span class="icon-arrow icon-next"></span>
           </div>
         </a>
@@ -448,6 +456,26 @@ const renderPokemonPage = async function (pokemon) {
 
   pokedexPokemonDetails.append(pokemonPageNavigation, pokemonPage);
   container.append(pokedexPokemonDetails);
+
+  document.querySelector('#pokemon-navigation__previuos').addEventListener(
+    'click',
+    () => {
+      renderPokemonPage(previuosPokemon);
+      document.querySelector('.pokedex-pokemon-details').remove();
+    },
+    {
+      once: true,
+    }
+  );
+
+  document.querySelector('#pokemon-navigation__next').addEventListener(
+    'click',
+    () => {
+      renderPokemonPage(nextPokemon);
+      document.querySelector('.pokedex-pokemon-details').remove();
+    },
+    { once: true }
+  );
 };
 
 home.addEventListener('click', () => {
