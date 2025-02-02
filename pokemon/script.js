@@ -471,6 +471,10 @@ const renderPokemonPage = async function (pokemon) {
   document.querySelector('#pokemon-navigation__next').addEventListener(
     'click',
     () => {
+      if (id === dataPokemons.length - 1) {
+        addAllPokemonCards();
+      }
+
       renderPokemonPage(nextPokemon);
       document.querySelector('.pokedex-pokemon-details').remove();
     },
