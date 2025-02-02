@@ -4,6 +4,15 @@ const POKEMON_LIMIT = 12;
 let pokemonOffset = 0;
 const START_ID = '#0000';
 const quantityCellGraphPokemonPage = 15;
+const listGraphStats = [
+  'HP',
+  'Attack',
+  'Defense',
+  'Special-Attack',
+  'Special-Defense',
+  'Speed',
+];
+
 const pokemonTypeDatabase = {
   Bug: { typeName: 'Bug', backgroundColor: '#729f3f', textColor: '#fff' },
   Dragon: {
@@ -94,8 +103,13 @@ const pokemonTypeDatabase = {
 };
 
 const cardCatalog = document.querySelector('.card-catalog');
-const cardCatalogButton = document.querySelector('.card-catalog__button');
+const cardCatalogButton = document.querySelector(
+  '.container__wrapper-for-button'
+);
 const container = document.querySelector('.container');
+const home = document.querySelector('.home');
+
+let dataPokemons = [];
 
 const renderThePokemonType = function (pokemon, typeWrapper) {
   pokemon.setOfForces.forEach((power) => {
@@ -109,32 +123,54 @@ const renderThePokemonType = function (pokemon, typeWrapper) {
   });
 };
 
+const hideCardCatalog = function () {
+  cardCatalog.style.display = 'none';
+  cardCatalogButton.style.display = 'none';
+};
+
+const showCardCatalog = function () {
+  cardCatalog.style.display = 'flex';
+  cardCatalogButton.style.display = 'flex';
+};
+
+const formId = function (id) {
+  return START_ID.slice(-START_ID.length, -String(id).length) + id;
+};
+
+const formName = function (name) {
+  return name.replace(name[0], name[0].toUpperCase());
+};
+
 const generatePokemonCard = function (pokemon) {
   const { img, id, name } = pokemon;
 
   cardCatalog.insertAdjacentHTML(
     'beforeend',
-    `     <div class="pokemon-card">
+    `     <div class="pokemon-card" id="${id}">
             <div class="pokemon-card__image">
               <img class="imgPC "src="${
                 img === '' ? './image/not-images.png' : img
               }" alt="image pokemon">
             </div>
             <div class="pokemon-card__info">
-              <p class="pokemon-card__id">${id}</p>
-              <h2 class="pokemon-card__name">${
+              <p class="pokemon-card__id">${formId(id)}</p>
+              <h2 class="pokemon-card__name">${formName(
                 name.length < 15 ? name : name.slice(0, 15) + '...'
-              }</h2>
-              <div class="pokemon-card__set-of-forces" id=${id}></div>
+              )}</h2>
+              <div class="pokemon-card__set-of-forces" id=${formId(id)}></div>
             </div>
           </div>`
   );
-  renderThePokemonType(pokemon, document.getElementById(id));
+  renderThePokemonType(pokemon, document.getElementById(formId(id)));
 };
 
 const addAllPokemonCards = async function () {
-  pokemonOffset += POKEMON_LIMIT;
-  dataPokemons.forEach((pokemon) => generatePokemonCard(pokemon));
+  await getPokemons();
+
+  for (let i = 0; i < POKEMON_LIMIT; i++) {
+    generatePokemonCard(dataPokemons[pokemonOffset]);
+    pokemonOffset++;
+  }
 };
 
 const fetchPokemonData = async (url) => {
@@ -143,10 +179,9 @@ const fetchPokemonData = async (url) => {
 };
 
 const getPokemons = async function () {
-  let arr = [];
   try {
     const data = await fetch(
-      `${POKEMON_API}/pokemon?limit=12&offset=${pokemonOffset}`
+      `${POKEMON_API}/pokemon?limit=${POKEMON_LIMIT}&offset=${pokemonOffset}`
     );
 
     const pokemons = await data.json();
@@ -159,27 +194,24 @@ const getPokemons = async function () {
       })
     );
 
-    pokemonsObjects.forEach((pokemon) => {
+    pokemonsObjects.forEach(async (pokemon) => {
       const obj = {
-        img: pokemon.sprites.front_default,
-        id:
-          START_ID.slice(-START_ID.length, -String(pokemon.id).length) +
-          pokemon.id,
-        name: pokemon.name.replace(
-          pokemon.name[0],
-          pokemon.name[0].toUpperCase()
-        ),
+        img: pokemon.sprites.other.dream_world.front_default,
+        id: pokemon.id,
+        name: pokemon.name,
         setOfForces: pokemon.types.map((power) =>
           power.type.name.replace(
             power.type.name[0],
             power.type.name[0].toUpperCase()
           )
         ),
+        abilities: pokemon.abilities[0].ability.name,
+        height: pokemon.height,
+        weight: pokemon.weight,
+        stats: pokemon.stats,
       };
-      arr.push(obj);
+      dataPokemons.push(obj);
     });
-
-    return arr;
   } catch (e) {
     console.log(e);
   }
@@ -188,8 +220,6 @@ const getPokemons = async function () {
 cardCatalogButton.addEventListener('click', async () => {
   addAllPokemonCards();
 });
-
-let dataPokemons = getPokemons().then((data) => data);
 
 addAllPokemonCards();
 
@@ -222,12 +252,62 @@ const createPokemonPageInfo = function (nameInfo, text) {
             </li>`;
 };
 
-const renderPokemonPage = function (pokemon) {
+const renderThePokemonTypeForPage = function (setOfForces) {
+  let result = '';
+
+  for (let i = 0; i < setOfForces.length; i++) {
+    result += `<li class="pokemon__type-of-force" style="background: ${
+      pokemonTypeDatabase[setOfForces[i]].backgroundColor
+    }; color: ${pokemonTypeDatabase[setOfForces[i]].textColor}">${
+      setOfForces[i]
+    }</li>`;
+  }
+
+  return result;
+};
+
+const renderPokemonPage = async function (pokemon) {
+  const { id, img, name, abilities, height, setOfForces, stats, weight } =
+    pokemon;
+
+  // const fetchDescription = await fetchPokemonData(
+  //   `${POKEMON_API}/characteristic/${id}`
+  // );
+
+  const fetchGenderFemale = await fetchPokemonData(`${POKEMON_API}/gender/1`);
+  const fetchGenderMale = await fetchPokemonData(`${POKEMON_API}/gender/2`);
+  const fetchGenderGenderless = await fetchPokemonData(
+    `${POKEMON_API}/gender/3`
+  );
+
+  let gender = '';
+
+  fetchGenderMale.pokemon_species_details.some(
+    (detail) => detail.pokemon_species.name === name
+  )
+    ? (gender += 'Female ')
+    : (gender += '');
+
+  fetchGenderFemale.pokemon_species_details.some(
+    (detail) => detail.pokemon_species.name === name
+  )
+    ? (gender += 'Male ')
+    : (gender += '');
+
+  fetchGenderGenderless.pokemon_species_details.some(
+    (detail) => detail.pokemon_species.name === name
+  )
+    ? (gender = 'Unknow')
+    : '';
+
+  // const description = fetchDescription.descriptions[7].description || 'awdf';
+
   const pokedexPokemonDetails = document.createElement('section');
   pokedexPokemonDetails.classList.add('pokedex-pokemon-details');
 
   const pokemonPageNavigation = document.createElement('nav');
   pokemonPageNavigation.classList.add('pokemon-page__navigation');
+  console.log();
   pokemonPageNavigation.insertAdjacentHTML(
     'afterbegin',
     `   <a href="#" class="pokemon-navigation__button">
@@ -245,7 +325,9 @@ const renderPokemonPage = function (pokemon) {
           </div>
         </a>
         <div class="pokemon__name__page">
-          <div>Ivysaur<span id="pokemon__id__page">#0002</span></div>
+          <div>${formName(name)}<span id="pokemon__id__page">${formId(
+      id
+    )}</span></div>
         </div>
       </nav>
         `
@@ -261,45 +343,49 @@ const renderPokemonPage = function (pokemon) {
   pokemonPageContainerColumn1.classList.add(
     'pokemon-page__container__column-1'
   );
-
   pokemonPageContainerColumn1.insertAdjacentHTML(
     'afterbegin',
     `
       <div class="pokemon-page__img__wrapper">
         <img
           class="pokemon-page__img"
-          src="./image/not-images.png"
+          src="${img}"
           alt="pokemon image"
         />
       </div>
       <div class="pokemon-page__stats-info">
         <h3 class="pokemon-page__stats-info__tittle">Stats</h3>
         <ul class="pokemon-page__stats-table">
-        ${createGrapOnStatsPokemonPage('HP', quantityCellGraphPokemonPage, 3)}
+        ${createGrapOnStatsPokemonPage(
+          'HP',
+          quantityCellGraphPokemonPage,
+          Math.floor(stats[0].base_stat / quantityCellGraphPokemonPage)
+        )}
         ${createGrapOnStatsPokemonPage(
           'Attack',
           quantityCellGraphPokemonPage,
-          4
+          Math.floor(stats[1].base_stat / quantityCellGraphPokemonPage)
         )}
         ${createGrapOnStatsPokemonPage(
           'Defense',
           quantityCellGraphPokemonPage,
-          5
+          Math.floor(stats[2].base_stat / quantityCellGraphPokemonPage)
         )}
+
         ${createGrapOnStatsPokemonPage(
           'Special-Attack',
           quantityCellGraphPokemonPage,
-          1
+          Math.floor(stats[3].base_stat / quantityCellGraphPokemonPage)
         )}
         ${createGrapOnStatsPokemonPage(
           'Special-Defense',
           quantityCellGraphPokemonPage,
-          4
+          Math.floor(stats[4].base_stat / quantityCellGraphPokemonPage)
         )}
         ${createGrapOnStatsPokemonPage(
-          'Special-Defense',
+          'Speed',
           quantityCellGraphPokemonPage,
-          7
+          Math.floor(stats[5].base_stat / quantityCellGraphPokemonPage)
         )}
         </ul>
     `
@@ -314,8 +400,7 @@ const renderPokemonPage = function (pokemon) {
     'afterbegin',
     `
       <p class="pokemon-page__description">
-        The more sunlight Ivysaur bathes in, the more strength wells up
-        within it, allowing the bud on its back to grow larger.
+        ${'здесь должно быть описание'}
       </p>
       <div class="pokemon-page__version">
         <h3>Versions:</h3>
@@ -330,36 +415,30 @@ const renderPokemonPage = function (pokemon) {
       <div class="pokemon-page__info">
         <div class="pokemon-page__info__column1">
           <ul class="pokemon-page__info__list">
-            ${createPokemonPageInfo('Height', 'text')}
-            ${createPokemonPageInfo('Weight', 'text')}
-            ${createPokemonPageInfo('Gender', 'text')}
+            ${createPokemonPageInfo('Height', height)}
+            ${createPokemonPageInfo('Weight', weight)}
+            ${createPokemonPageInfo('Gender', gender)}
           </ul>
         </div>
         <div class="pokemon-page__info__column2">
           <ul class="pokemon-page__info__list">
             ${createPokemonPageInfo('Category', 'text')}
-            ${createPokemonPageInfo('Abilities', 'text')}
+            ${createPokemonPageInfo('Abilities', abilities)}
           </ul>
         </div>
       </div>
 
       <h3 class="pokemon-page__tittle-type">Type</h3>
-      <ul class="pokemon__set-of-forces" id="${id}">
-        <li class="pokemon__type-of-force">Grass</li>
-        <li class="pokemon__type-of-force">Poison</li>
+      <ul class="pokemon__set-of-forces">
+          ${renderThePokemonTypeForPage(setOfForces)}
       </ul>
 
       <h3 class="pokemon-page__tittle-type">Weaknesses</h3>
       <ul class="pokemon__set-of-forces">
-        <li class="pokemon__type-of-force">Grass</li>
-        <li class="pokemon__type-of-force">Poison</li>
-        <li class="pokemon__type-of-force">Grass</li>
-        <li class="pokemon__type-of-force">Poison</li>
+          ${renderThePokemonTypeForPage(['Grass', 'Poison', 'Grass', 'Poison'])}
       </ul>
     `
   );
-
-  renderThePokemonType(pokemon, document.getElementById(id));
 
   pokemonPageContainer.append(
     pokemonPageContainerColumn1,
@@ -371,4 +450,15 @@ const renderPokemonPage = function (pokemon) {
   container.append(pokedexPokemonDetails);
 };
 
-renderPokemonPage();
+home.addEventListener('click', () => {
+  showCardCatalog();
+  document.querySelector('.pokedex-pokemon-details').remove();
+});
+
+cardCatalog.addEventListener('click', function (event) {
+  const card = event.target.closest('.pokemon-card');
+  if (card) {
+    renderPokemonPage(dataPokemons[+card.id - 1]);
+    hideCardCatalog();
+  }
+});
