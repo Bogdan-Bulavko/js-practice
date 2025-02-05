@@ -113,28 +113,27 @@ const renderThePokemonType = function (pokemon, typeWrapper) {
 };
 
 const GetPokemonIdFromUrl = (url) => {
-  const index = url.match('=').index
+  const index = url.match('=').index;
 
   return Number(url.slice(index + 1));
-}
+};
 
 const formatedId = (id) => {
   const match = id.match(/^#(\d+)$/);
 
-  return parseInt(match[1], 10); 
-}
+  return parseInt(match[1], 10);
+};
 
 // обработчик нажатий на ссылки
-const linksHandler = event =>  {
+const linksHandler = (event) => {
   // запрещаем дальнейший переход по ссылке
   event.preventDefault();
-
   // получаем запрошенный url
   let url = new URL(event.currentTarget.href);
-  
+  const pathname = url.pathname.replace('/C:', '');
   // запускаем роутер, предавая ему path
-  Router.dispatch(url.pathname);
-}
+  Router.dispatch(pathname);
+};
 
 const generatePokemonCard = function (pokemon) {
   const { img, id, name } = pokemon;
@@ -143,7 +142,9 @@ const generatePokemonCard = function (pokemon) {
     'beforeend',
     `     <div class="pokemon-card">
             <div class="pokemon-card__image">
-              <a href="/pokemons/${formatedId(id)}" id="pokemonLink-${formatedId(id)}">
+              <a href="/pokemons/${formatedId(
+                id
+              )}" id="pokemonLink-${formatedId(id)}">
                 <img class="imgPC "src="${
                   img === '' ? './image/not-images.png' : img
                 }" alt="image pokemon">
@@ -173,19 +174,22 @@ const RenderPokemonPage = async ({ id }) => {
   }
 
   if (allPokemonsData.length) {
-    innerPokemonData = allPokemonsData.find(item => formatedId(item.id) === id)
+    innerPokemonData = allPokemonsData.find(
+      (item) => formatedId(item.id) === id
+    );
   }
-  
+
   if (!innerPokemonData) {
     innerPokemonData = await fetchPokemonData(`${POKEMON_API}/pokemon/${id}`);
   }
-  
+
   console.log('innerPokemonData', innerPokemonData);
   let newElement = document.createElement('div');
   newElement.id = 'inner-pokemon-container';
 
   let pokemonImage = document.createElement('img');
-  pokemonImage.src = innerPokemonData.img || innerPokemonData.sprites.front_default;
+  pokemonImage.src =
+    innerPokemonData.img || innerPokemonData.sprites.front_default;
 
   let pokemonName = document.createElement('h4');
   pokemonName.innerText = innerPokemonData.name;
@@ -199,7 +203,7 @@ const RenderPokemonPage = async ({ id }) => {
   theFirstChild.style.display = 'none';
 
   appContainer.insertBefore(newElement, theFirstChild);
-}
+};
 
 const addAllPokemonCards = async function () {
   let dataPokemons = await getPokemons();
@@ -258,12 +262,14 @@ const getPokemons = async function () {
 
 const ShowMainPage = () => {
   console.log('ShowMainPage');
-  let innerPokemonContainer = document.getElementById('inner-pokemon-container');
+  let innerPokemonContainer = document.getElementById(
+    'inner-pokemon-container'
+  );
   innerPokemonContainer.remove();
   innerPokemonData = null;
 
-  allPokemonContainer.style.display = 'flex';
-}
+  allPokemonContainer.style.display = 'block';
+};
 
 cardCatalogButton.addEventListener('click', async () => {
   addAllPokemonCards();
