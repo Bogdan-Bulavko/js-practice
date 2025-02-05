@@ -71,6 +71,7 @@ body {
   margin: 0 auto;
   max-width: 1024px;
   height: 75px;
+  cursor: pointer;
 }
 
 .card-catalog__button {
@@ -81,6 +82,7 @@ body {
   color: white;
   border-radius: 5px;
   border: 0px;
+  cursor: pointer;
 }
 
 .pokemon-card {
@@ -94,6 +96,7 @@ body {
   margin-bottom: 5px;
   height: 230px;
   border-radius: 10px;
+  cursor: pointer;
 }
 
 .imgPC {

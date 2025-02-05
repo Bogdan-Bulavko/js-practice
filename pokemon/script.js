@@ -102,14 +102,14 @@ const pokemonTypeDatabase = {
   },
 };
 
-const cardCatalog = document.querySelector('.card-catalog');
-const cardCatalogButton = document.querySelector(
-  '.container__wrapper-for-button'
-);
-const container = document.querySelector('.container');
-const home = document.querySelector('.home');
+let innerPokemonData = null;
+let allPokemonsData = [];
 
-let dataPokemons = [];
+const appContainer = document.getElementById('app');
+const cardCatalog = document.querySelector('.card-catalog');
+const cardCatalogButton = document.querySelector('.card-catalog__button');
+const allPokemonContainer = document.getElementById('container');
+const homebtn = document.querySelector('.home');
 
 const renderThePokemonType = function (pokemon, typeWrapper) {
   pokemon.setOfForces.forEach((power) => {
@@ -125,12 +125,10 @@ const renderThePokemonType = function (pokemon, typeWrapper) {
 
 const hideCardCatalog = function () {
   cardCatalog.style.display = 'none';
-  cardCatalogButton.style.display = 'none';
 };
 
 const showCardCatalog = function () {
   cardCatalog.style.display = 'flex';
-  cardCatalogButton.style.display = 'flex';
 };
 
 const formId = function (id) {
@@ -141,6 +139,23 @@ const formName = function (name) {
   return name.replace(name[0], name[0].toUpperCase());
 };
 
+const GetPokemonIdFromUrl = (url) => {
+  const index = url.match('=').index;
+
+  return Number(url.slice(index + 1));
+};
+
+// обработчик нажатий на ссылки
+const linksHandler = (event) => {
+  // запрещаем дальнейший переход по ссылке
+  event.preventDefault();
+  // получаем запрошенный url
+  let url = new URL(event.currentTarget.href);
+  const pathname = url.pathname.replace('/C:', '');
+  // запускаем роутер, предавая ему path
+  Router.dispatch(pathname);
+};
+
 const generatePokemonCard = function (pokemon) {
   const { img, id, name } = pokemon;
 
@@ -148,9 +163,11 @@ const generatePokemonCard = function (pokemon) {
     'beforeend',
     `     <div class="pokemon-card" id="${id}">
             <div class="pokemon-card__image">
-              <img class="imgPC "src="${
-                img === '' ? './image/not-images.png' : img
-              }" alt="image pokemon">
+              <a href="/pokemons/${id}" id="pokemonLink-${id}">
+                <img class="imgPC "src="${
+                  img === '' ? './image/not-images.png' : img
+                }" alt="image pokemon">
+              </a>
             </div>
             <div class="pokemon-card__info">
               <p class="pokemon-card__id">${formId(id)}</p>
@@ -161,14 +178,58 @@ const generatePokemonCard = function (pokemon) {
             </div>
           </div>`
   );
-  renderThePokemonType(pokemon, document.getElementById(formId(id)));
+  renderThePokemonType(pokemon, document.getElementById(id));
+
+  const pokemonLink = document.getElementById(`pokemonLink-${id}`);
+  pokemonLink.addEventListener('click', (event) => linksHandler(event));
+};
+
+const RenderPokemonPage = async ({ id }) => {
+  console.log('RenderPokemonPage', id);
+
+  // если хэша нет - добавляем его в историю
+  if (!window.location.href.match('#')) {
+    history.pushState({}, null, window.location.href + `#pokemonId=${id}`);
+  }
+
+  if (allPokemonsData.length) {
+    innerPokemonData = allPokemonsData.find((item) => item.id === id);
+  }
+
+  if (!innerPokemonData) {
+    innerPokemonData = formDataPokemon(
+      await fetchPokemonData(`${POKEMON_API}/pokemon/${id}`)
+    );
+  }
+
+  console.log('innerPokemonData', innerPokemonData);
+  // let newElement = document.createElement('div');
+  // newElement.id = 'inner-pokemon-container';
+
+  // let pokemonImage = document.createElement('img');
+  // pokemonImage.src =
+  //   innerPokemonData.img || innerPokemonData.sprites.front_default;
+
+  // let pokemonName = document.createElement('h4');
+  // pokemonName.innerText = innerPokemonData.name;
+
+  // let pokemonId = document.createElement('p');
+  // pokemonId.innerText = innerPokemonData.id;
+
+  // newElement.append(pokemonImage, pokemonName, pokemonId);
+
+  // let theFirstChild = appContainer.firstElementChild;
+  // theFirstChild.style.display = 'none';
+
+  // appContainer.insertBefore(newElement, theFirstChild);
+  console.log();
+  renderPokemonPage(innerPokemonData);
+  hideCardCatalog();
 };
 
 const addAllPokemonCards = async function () {
-  await getPokemons();
-
   for (let i = 0; i < POKEMON_LIMIT; i++) {
-    generatePokemonCard(dataPokemons[pokemonOffset]);
+    generatePokemonCard(allPokemonsData[pokemonOffset]);
     pokemonOffset++;
   }
 };
@@ -179,6 +240,7 @@ const fetchPokemonData = async (url) => {
 };
 
 const getPokemons = async function () {
+  const arr = [];
   try {
     const data = await fetch(
       `${POKEMON_API}/pokemon?limit=${POKEMON_LIMIT}&offset=${pokemonOffset}`
@@ -195,33 +257,50 @@ const getPokemons = async function () {
     );
 
     pokemonsObjects.forEach(async (pokemon) => {
-      const obj = {
-        img: pokemon.sprites.other.dream_world.front_default,
-        id: pokemon.id,
-        name: pokemon.name,
-        setOfForces: pokemon.types.map((power) =>
-          power.type.name.replace(
-            power.type.name[0],
-            power.type.name[0].toUpperCase()
-          )
-        ),
-        abilities: pokemon.abilities[0].ability.name,
-        height: pokemon.height,
-        weight: pokemon.weight,
-        stats: pokemon.stats,
-      };
-      dataPokemons.push(obj);
+      const obj = formDataPokemon(pokemon);
+      arr.push(obj);
+      allPokemonsData.push(obj);
     });
   } catch (e) {
     console.log(e);
   }
 };
 
+const formDataPokemon = (pokemon) => {
+  return {
+    img: pokemon.sprites.other.dream_world.front_default,
+    id: pokemon.id,
+    name: pokemon.name,
+    setOfForces: pokemon.types.map((power) =>
+      power.type.name.replace(
+        power.type.name[0],
+        power.type.name[0].toUpperCase()
+      )
+    ),
+    abilities: pokemon.abilities[0].ability.name,
+    height: pokemon.height,
+    weight: pokemon.weight,
+    stats: pokemon.stats,
+  };
+};
+
+const ShowMainPage = () => {
+  console.log('ShowMainPage');
+  let innerPokemonContainer = document.querySelector(
+    '.pokedex-pokemon-details'
+  );
+  innerPokemonContainer.remove();
+  innerPokemonData = null;
+
+  allPokemonContainer.style.display = 'block';
+  cardCatalog.style.display = 'flex';
+  addAllPokemonCards();
+};
+
 cardCatalogButton.addEventListener('click', async () => {
+  console.log();
   addAllPokemonCards();
 });
-
-addAllPokemonCards();
 
 const createGrapOnStatsPokemonPage = function (nameGraph, quantityCell, num) {
   let arrDivisionElements = [];
@@ -255,13 +334,13 @@ const createPokemonPageInfo = function (nameInfo, text) {
 const renderThePokemonTypeForPage = function (setOfForces) {
   let result = '';
 
-  for (let i = 0; i < setOfForces.length; i++) {
-    result += `<li class="pokemon__type-of-force" style="background: ${
-      pokemonTypeDatabase[setOfForces[i]].backgroundColor
-    }; color: ${pokemonTypeDatabase[setOfForces[i]].textColor}">${
-      setOfForces[i]
-    }</li>`;
-  }
+  // for (let i = 0; i < setOfForces.length; i++) {
+  //   result += `<li class="pokemon__type-of-force" style="background: ${
+  //     pokemonTypeDatabase[setOfForces[i]].backgroundColor
+  //   }; color: ${pokemonTypeDatabase[setOfForces[i]].textColor}">${
+  //     setOfForces[i]
+  //   }</li>`;
+  // }
 
   return result;
 };
@@ -273,7 +352,7 @@ const renderPokemonPage = async function (pokemon) {
   // const fetchDescription = await fetchPokemonData(
   //   `${POKEMON_API}/characteristic/${id}`
   // );
-
+  console.log(pokemon);
   const fetchGenderFemale = await fetchPokemonData(`${POKEMON_API}/gender/1`);
   const fetchGenderMale = await fetchPokemonData(`${POKEMON_API}/gender/2`);
   const fetchGenderGenderless = await fetchPokemonData(
@@ -309,26 +388,28 @@ const renderPokemonPage = async function (pokemon) {
   pokemonPageNavigation.classList.add('pokemon-page__navigation');
 
   const nextPokemon =
-    id === dataPokemons.length ? dataPokemons[id - 1] : dataPokemons[id];
+    id === allPokemonsData.length
+      ? allPokemonsData[id - 1]
+      : allPokemonsData[id];
   const previuosPokemon =
-    id === 1 ? dataPokemons[id - 1] : dataPokemons[id - 2];
+    id === 1 ? allPokemonsData[id - 1] : allPokemonsData[id - 2];
 
-  console.log(dataPokemons.length, id);
+  console.log(allPokemonsData.length, id);
   pokemonPageNavigation.insertAdjacentHTML(
     'afterbegin',
     `   <a href="#" class="pokemon-navigation__button" id="pokemon-navigation__previuos">
           <div class="pokemon-navigation__button--wrapper previuos">
             <span class="icon-arrow icon-previuos"></span
-            ><span class="pokemon__id">${formId(previuosPokemon.id)}</span
-            ><span class="pokemon__name">${formName(
+            ><span class="pokemon__id">{formId(previuosPokemon.id)}</span
+            ><span class="pokemon__name">{formName(
               previuosPokemon.name
             )}</span>
           </div>
         </a>
         <a href="#" class="pokemon-navigation__button" id="pokemon-navigation__next">
           <div class="pokemon-navigation__button--wrapper next">
-            <span class="pokemon__name">${formName(nextPokemon.name)}</span
-            ><span class="pokemon__id">${formId(nextPokemon.id)}</span
+            <span class="pokemon__name">{formName(nextPokemon.name)}</span
+            ><span class="pokemon__id">{formId(nextPokemon.id)}</span
             ><span class="icon-arrow icon-next"></span>
           </div>
         </a>
@@ -457,40 +538,47 @@ const renderPokemonPage = async function (pokemon) {
   pokedexPokemonDetails.append(pokemonPageNavigation, pokemonPage);
   container.append(pokedexPokemonDetails);
 
-  document.querySelector('#pokemon-navigation__previuos').addEventListener(
-    'click',
-    () => {
-      renderPokemonPage(previuosPokemon);
-      document.querySelector('.pokedex-pokemon-details').remove();
-    },
-    {
-      once: true,
-    }
-  );
+  // document.querySelector('#pokemon-navigation__previuos').addEventListener(
+  //   'click',
+  //   () => {
+  //     renderPokemonPage(previuosPokemon);
+  //     document.querySelector('.pokedex-pokemon-details').remove();
+  //   },
+  //   {
+  //     once: true,
+  //   }
+  // );
 
-  document.querySelector('#pokemon-navigation__next').addEventListener(
-    'click',
-    () => {
-      if (id === dataPokemons.length - 1) {
-        addAllPokemonCards();
-      }
+  // document.querySelector('#pokemon-navigation__next').addEventListener(
+  //   'click',
+  //   () => {
+  //     if (id === allPokemonsData.length - 1) {
+  //       addAllPokemonCards();
+  //     }
 
-      renderPokemonPage(nextPokemon);
-      document.querySelector('.pokedex-pokemon-details').remove();
-    },
-    { once: true }
-  );
+  //     renderPokemonPage(nextPokemon);
+  //     document.querySelector('.pokedex-pokemon-details').remove();
+  //   },
+  //   { once: true }
+  // );
 };
 
-home.addEventListener('click', () => {
+homebtn.addEventListener('click', () => {
   showCardCatalog();
   document.querySelector('.pokedex-pokemon-details').remove();
 });
 
-cardCatalog.addEventListener('click', function (event) {
-  const card = event.target.closest('.pokemon-card');
-  if (card) {
-    renderPokemonPage(dataPokemons[+card.id - 1]);
-    hideCardCatalog();
-  }
-});
+// cardCatalog.addEventListener('click', function (event) {
+//   const card = event.target.closest('.pokemon-card');
+//   if (card) {
+//     renderPokemonPage(allPokemonsData[+card.id - 1]);
+//     hideCardCatalog();
+//   }
+// });
+if (window.location.href.match('#')) {
+  const pokemonId = GetPokemonIdFromUrl(window.location.href);
+
+  RenderPokemonPage({ id: pokemonId });
+} else {
+  addAllPokemonCards();
+}
