@@ -516,3 +516,17 @@ if (window.location.href.match('#')) {
 } else {
   addAllPokemonCards();
 }
+
+container.addEventListener('click', async (e) => {
+  const target =
+    e.target.closest('#pokemon-navigation__previuos') ||
+    e.target.closest('#pokemon-navigation__next');
+
+  const id = parseInt(target.children[0].children[1].textContent.slice(1), 10);
+  innerPokemonData = formDataPokemon(
+    await fetchPokemonData(`${POKEMON_API}/pokemon/${id}`)
+  );
+
+  document.querySelector('.pokedex-pokemon-details').remove();
+  RenderPokemonPage({ id: id });
+});
