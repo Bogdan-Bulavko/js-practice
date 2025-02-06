@@ -393,7 +393,7 @@ const createPokemonPage = async function (pokemon) {
 
   pokemonPageNavigation.insertAdjacentHTML(
     'afterbegin',
-    `   <a href="#" class="pokemon-navigation__button" id="pokemon-navigation__previuos">
+    `   <div class="pokemon-navigation__button" id="pokemon-navigation__previuos">
           <div class="pokemon-navigation__button--wrapper previuos">
             <span class="icon-arrow icon-previuos"></span
             ><span class="pokemon__id">${formId(previuosPokemon.id)}</span
@@ -401,14 +401,14 @@ const createPokemonPage = async function (pokemon) {
               previuosPokemon.name
             )}</span>
           </div>
-        </a>
-        <a href="#" class="pokemon-navigation__button" id="pokemon-navigation__next">
+        </div>
+        <div class="pokemon-navigation__button" id="pokemon-navigation__next">
           <div class="pokemon-navigation__button--wrapper next">
             <span class="pokemon__name">${formName(nextPokemon.name)}</span
             ><span class="pokemon__id">${formId(nextPokemon.id)}</span
             ><span class="icon-arrow icon-next"></span>
           </div>
-        </a>
+        </div>
         <div class="pokemon__name__page">
           <div>${formName(name)}<span id="pokemon__id__page">${formId(
       id
