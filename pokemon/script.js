@@ -393,7 +393,7 @@ const createPokemonPage = async function (pokemon) {
 
   pokemonPageNavigation.insertAdjacentHTML(
     'afterbegin',
-    `   <div class="pokemon-navigation__button" id="pokemon-navigation__previuos">
+    `   <div class="pokemon-navigation__button" id="${previuosPokemon.id}">
           <div class="pokemon-navigation__button--wrapper previuos">
             <span class="icon-arrow icon-previuos"></span
             ><span class="pokemon__id">${formId(previuosPokemon.id)}</span
@@ -402,7 +402,7 @@ const createPokemonPage = async function (pokemon) {
             )}</span>
           </div>
         </div>
-        <div class="pokemon-navigation__button" id="pokemon-navigation__next">
+        <div class="pokemon-navigation__button" id="${nextPokemon.id}">
           <div class="pokemon-navigation__button--wrapper next">
             <span class="pokemon__name">${formName(nextPokemon.name)}</span
             ><span class="pokemon__id">${formId(nextPokemon.id)}</span
@@ -518,15 +518,17 @@ if (window.location.href.match('#')) {
 }
 
 container.addEventListener('click', async (e) => {
-  const target =
-    e.target.closest('#pokemon-navigation__previuos') ||
-    e.target.closest('#pokemon-navigation__next');
+  const target = e.target.closest('.pokemon-navigation__button');
 
-  const id = parseInt(target.children[0].children[1].textContent.slice(1), 10);
+  if (target === null) return;
+
+  const id = target.id;
+
   innerPokemonData = formDataPokemon(
     await fetchPokemonData(`${POKEMON_API}/pokemon/${id}`)
   );
 
   document.querySelector('.pokedex-pokemon-details').remove();
+
   RenderPokemonPage({ id: id });
 });
