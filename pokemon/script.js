@@ -390,7 +390,6 @@ const createPokemonPage = async function (pokemon) {
     previuosPokemon =
       id === 1 ? allPokemonsData[id - 1] : allPokemonsData[id - 2];
   }
-
   pokemonPageNavigation.insertAdjacentHTML(
     'afterbegin',
     `   <div class="pokemon-navigation__button" id="${previuosPokemon.id}">
@@ -522,7 +521,7 @@ container.addEventListener('click', async (e) => {
 
   if (target === null) return;
 
-  const id = target.id;
+  const id = +target.id;
 
   innerPokemonData = formDataPokemon(
     await fetchPokemonData(`${POKEMON_API}/pokemon/${id}`)
