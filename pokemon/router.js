@@ -42,7 +42,7 @@ let Router = {
       if (e.newURL.replace('file://', '') === this.getStaticUrl()) {
         ShowMainPage();
       } else {
-        ClearInnerPokemonData();
+        innerPokemonData = null;
         const pokemonId = GetPokemonIdFromUrl(e.newURL);
         RenderPokemonPage({ id: pokemonId });
       }
@@ -52,7 +52,7 @@ let Router = {
   dispatch: function (path) {
     // количество маршрутов в массиве
     let i = this._routes.length;
-    // console.log(path, i, this);
+    console.log(path, i, this);
     // цикл до конца
     while (i--) {
       // если запрошенный путь соответствует какому-либо

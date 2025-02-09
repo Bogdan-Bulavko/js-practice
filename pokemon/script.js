@@ -164,6 +164,7 @@ const linksHandler = (event) => {
   let url = new URL(event.currentTarget.href);
   const pathname = url.pathname.replace('/C:', '');
   // запускаем роутер, предавая ему path
+
   Router.dispatch(pathname);
 };
 
@@ -392,7 +393,7 @@ const createPokemonPage = async function (pokemon) {
   }
   pokemonPageNavigation.insertAdjacentHTML(
     'afterbegin',
-    `   <div class="pokemon-navigation__button" id="${previuosPokemon.id}">
+    `   <div class="pokemon-navigation__button prev" id="${previuosPokemon.id}">
           <div class="pokemon-navigation__button--wrapper previuos">
             <span class="icon-arrow icon-previuos"></span
             ><span class="pokemon__id">${formId(previuosPokemon.id)}</span
@@ -401,7 +402,7 @@ const createPokemonPage = async function (pokemon) {
             )}</span>
           </div>
         </div>
-        <div class="pokemon-navigation__button" id="${nextPokemon.id}">
+        <div class="pokemon-navigation__button nex" id="${nextPokemon.id}">
           <div class="pokemon-navigation__button--wrapper next">
             <span class="pokemon__name">${formName(nextPokemon.name)}</span
             ><span class="pokemon__id">${formId(nextPokemon.id)}</span
@@ -507,19 +508,20 @@ const createPokemonPage = async function (pokemon) {
 
   pokedexPokemonDetails.append(pokemonPageNavigation, pokemonPage);
   container.append(pokedexPokemonDetails);
+
+  const eventButtonPreviuos = document.querySelector('.prev');
+  const eventButtonNext = document.querySelector('.nex');
+
+  eventButtonPreviuos.addEventListener('click', (e) =>
+    transitionBetweenElements(e)
+  );
+  eventButtonNext.addEventListener('click', (e) =>
+    transitionBetweenElements(e)
+  );
 };
 
-if (window.location.href.match('#')) {
-  const pokemonId = GetPokemonIdFromUrl(window.location.href);
-  RenderPokemonPage({ id: pokemonId });
-} else {
-  addAllPokemonCards();
-}
-
-container.addEventListener('click', async (e) => {
-  const target = e.target.closest('.pokemon-navigation__button');
-
-  if (target === null) return;
+async function transitionBetweenElements(e) {
+  const target = e.currentTarget;
 
   const id = +target.id;
 
@@ -530,4 +532,11 @@ container.addEventListener('click', async (e) => {
   document.querySelector('.pokedex-pokemon-details').remove();
 
   RenderPokemonPage({ id: id });
-});
+}
+
+if (window.location.href.match('#')) {
+  const pokemonId = GetPokemonIdFromUrl(window.location.href);
+  RenderPokemonPage({ id: pokemonId });
+} else {
+  addAllPokemonCards();
+}
