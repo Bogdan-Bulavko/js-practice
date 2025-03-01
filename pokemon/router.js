@@ -14,7 +14,7 @@ let Router = {
   // метод проходиться по массиву routes и создает
   // создает объект на каждый маршрут
   init: function () {
-    console.log('init router');
+    // console.log('init router');
     // объявляем свойство _routes
     this._routes = [];
     for (let route in this.routes) {
@@ -52,7 +52,7 @@ let Router = {
   dispatch: function (path) {
     // количество маршрутов в массиве
     let i = this._routes.length;
-    console.log(path, i, this);
+    // console.log(path, i, this);
     // цикл до конца
     while (i--) {
       // если запрошенный путь соответствует какому-либо
@@ -75,7 +75,7 @@ let Router = {
   },
 
   pokemon: function (id, path) {
-    console.log('pokemon', id, path);
+    // console.log('pokemon', id, path);
 
     RenderPokemonPage({ id, router: { path } });
   },
