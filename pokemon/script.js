@@ -164,6 +164,7 @@ const linksHandler = (event) => {
   let url = new URL(event.currentTarget.href);
   const pathname = url.pathname.replace('/C:', '');
   // запускаем роутер, предавая ему path
+
   Router.dispatch(pathname);
 };
 
@@ -390,10 +391,9 @@ const createPokemonPage = async function (pokemon) {
     previuosPokemon =
       id === 1 ? allPokemonsData[id - 1] : allPokemonsData[id - 2];
   }
-
   pokemonPageNavigation.insertAdjacentHTML(
     'afterbegin',
-    `   <div class="pokemon-navigation__button" id="pokemon-navigation__previuos">
+    `   <div class="pokemon-navigation__button prev" id="${previuosPokemon.id}">
           <div class="pokemon-navigation__button--wrapper previuos">
             <span class="icon-arrow icon-previuos"></span
             ><span class="pokemon__id">${formId(previuosPokemon.id)}</span
@@ -402,7 +402,7 @@ const createPokemonPage = async function (pokemon) {
             )}</span>
           </div>
         </div>
-        <div class="pokemon-navigation__button" id="pokemon-navigation__next">
+        <div class="pokemon-navigation__button nex" id="${nextPokemon.id}">
           <div class="pokemon-navigation__button--wrapper next">
             <span class="pokemon__name">${formName(nextPokemon.name)}</span
             ><span class="pokemon__id">${formId(nextPokemon.id)}</span
@@ -508,7 +508,31 @@ const createPokemonPage = async function (pokemon) {
 
   pokedexPokemonDetails.append(pokemonPageNavigation, pokemonPage);
   container.append(pokedexPokemonDetails);
+
+  const eventButtonPreviuos = document.querySelector('.prev');
+  const eventButtonNext = document.querySelector('.nex');
+
+  eventButtonPreviuos.addEventListener('click', (e) =>
+    transitionBetweenElements(e)
+  );
+  eventButtonNext.addEventListener('click', (e) =>
+    transitionBetweenElements(e)
+  );
 };
+
+async function transitionBetweenElements(e) {
+  const target = e.currentTarget;
+
+  const id = +target.id;
+
+  innerPokemonData = formDataPokemon(
+    await fetchPokemonData(`${POKEMON_API}/pokemon/${id}`)
+  );
+
+  document.querySelector('.pokedex-pokemon-details').remove();
+
+  RenderPokemonPage({ id: id });
+}
 
 if (window.location.href.match('#')) {
   const pokemonId = GetPokemonIdFromUrl(window.location.href);
