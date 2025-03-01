@@ -7,7 +7,22 @@
     <title>Document</title>
   </head>
   <body>
-    <div class="card-catalog"></div>
+    <div id="app">
+      <div id="container" class="container">
+        <div class="wrapper">
+          <div class="card-catalog"></div>
+          <div class="container__wrapper-for-button">
+            <button class="card-catalog__button">Load more Pokemon</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <script src="script.js"></script>
+    <script src="./router.js"></script>
+    <script>
+      // инициализируем роутер
+      Router.init();
+    </script>
   </body>
 </html>

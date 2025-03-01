@@ -9,4 +9,9 @@
 .circle {
   position: absolute;
   border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
 }
