@@ -1,0 +1,75 @@
+{
+  "questions": [
+    {
+      "question": "Вопрос №1: Как называется столица Франции?",
+      "answer": {
+        "answer1": "Париж",
+        "answer2": "Лондон",
+        "answer3": "Берлин",
+        "answer4": "Москва"
+      },
+      "correctAnswer": "Париж",
+      "id": "bf43"
+    },
+    {
+      "question": "Вопрос №2: Как называется столица России?",
+      "answer": {
+        "answer1": "Париж",
+        "answer2": "Лондон",
+        "answer3": "Берлин",
+        "answer4": "Москва",
+        "answer5": "Москва"
+      },
+      "correctAnswer": "Москва",
+      "id": "cdf7"
+    },
+    {
+      "question": "Вопрос №3: Как называется столица Германии?",
+      "answer": {
+        "answer1": "Париж",
+        "answer2": "Лондон",
+        "answer3": "Берлин",
+        "answer4": "Москва",
+        "answer5": "Москва"
+      },
+      "correctAnswer": "Берлин",
+      "id": "9520"
+    },
+    {
+      "question": "Вопрос №4: Как называется столица Великобритании?",
+      "answer": {
+        "answer1": "Париж",
+        "answer2": "Лондон",
+        "answer3": "Берлин",
+        "answer4": "Москва",
+        "answer5": "Москва"
+      },
+      "correctAnswer": "Лондон",
+      "id": "6fee"
+    },
+    {
+      "question": "Вопрос №5: Как называется столица Италия?",
+      "answer": {
+        "answer1": "Париж",
+        "answer2": "Лондон",
+        "answer3": "Москва",
+        "answer4": "Рим",
+        "answer5": "Москва"
+      },
+      "correctAnswer": "Рим",
+      "id": "a1f5"
+    },
+    {
+      "answer1": "Поздравляю!",
+      "answer2": "К сожалению",
+      "id": "cc60"
+    }
+  ],
+  "statistics": [
+    {
+      "id": "7c59",
+      "UserName": null,
+      "grade": 0
+    }
+  ]
+}
